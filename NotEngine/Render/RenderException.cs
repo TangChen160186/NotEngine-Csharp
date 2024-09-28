@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace NotEngine.Render;
 
-namespace NotEngine.Render
+internal class RenderException
 {
-    internal class RenderException
-    {
-    }
 }

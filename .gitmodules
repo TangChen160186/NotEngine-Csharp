@@ -1,0 +1,3 @@
+[submodule "ThirdPart"]
+	path = ThirdPart
+	url = git@github.com:TangChen160186/gemini.git
