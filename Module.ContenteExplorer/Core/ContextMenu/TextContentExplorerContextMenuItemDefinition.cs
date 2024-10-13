@@ -9,17 +9,20 @@ public class TextContentExplorerContextMenuItemDefinition : ContentExplorerConte
     private readonly Uri _iconSource;
     public override string Text => _text;
 
-    public override Uri IconSource => _iconSource;
+    public override string PathData { get; }
+    public override string PathDataForegroundName { get; }
 
     public override KeyGesture KeyGesture => null;
 
     public override CommandDefinitionBase CommandDefinition => null;
 
+
     public TextContentExplorerContextMenuItemDefinition(ContentExplorerContextMenuItemGroupDefinition group, int sortOrder, string text,
-        Uri iconSource = null)
-        : base(group, sortOrder)
+        string pathData = null,string pathDataForegroundName = null,IEnumerable<Type> fileTypes = null)
+        : base(group, sortOrder, fileTypes)
     {
         _text = text;
-        _iconSource = iconSource;
+        PathDataForegroundName = pathDataForegroundName;
+        PathData = pathData;
     }
 }

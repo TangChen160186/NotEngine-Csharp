@@ -8,6 +8,7 @@ using Gemini.Framework.Commands;
 using Gemini.Framework.Services;
 using GongSolutions.Wpf.DragDrop;
 using Module.ContentExplorer.Commands;
+using Module.ContentExplorer.Core.FileType;
 using Module.ContentExplorer.Models;
 using Module.ContentExplorer.Models.ContextMenu;
 using Module.ContentExplorer.Utils;
@@ -18,6 +19,8 @@ namespace Module.ContentExplorer.ViewModels;
 [Export]
 public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<RenameCommandDefinition>,ICommandHandler<OpenInFileExplorerCommandDefinition>
 {
+    private readonly IContextMenuBuilder _contextMenuBuilder;
+
     #region Tool Properties
     public override string DisplayName { get; set; } = "ContentExplorer";
     public override PaneLocation PreferredLocation => PaneLocation.Bottom;
@@ -27,10 +30,15 @@ public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<Renam
     [ImportingConstructor]
     public ContentExplorerViewModel(IContextMenuBuilder contextMenuBuilder)
     {
-        FolderItems = [new FileOrFolderItem(@"G:\OpenTK-W", true)];
+        _contextMenuBuilder = contextMenuBuilder;
+        FolderItems = [new FileOrFolderItem(@"C:\Users\16018\Desktop\NotEngineTest\Assets", true)];
         FolderItems[0].IsExpanded = true;
         FolderItems[0].CanEdit = false;
-        ContextMenuItems = contextMenuBuilder.BuildMenuBar();
+        if (CurrentSelectFolderItem != null)
+        {
+            ContextMenuItems = _contextMenuBuilder.BuildMenuBar(CurrentSelectFolderItem.FileType.GetType());
+        }
+
     }
 
 
@@ -59,7 +67,16 @@ public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<Renam
     public FileOrFolderItem? CurrentSelectFolderItem
     {
         get => _currentSelectFolderItem;
-        set => Set(ref _currentSelectFolderItem, value);
+        set
+        {
+            if (Set(ref _currentSelectFolderItem, value))
+            {
+                if (CurrentSelectFolderItem != null)
+                {
+                    ContextMenuItems = _contextMenuBuilder.BuildMenuBar(CurrentSelectFolderItem.FileType.GetType());
+                }
+            };
+        } 
     }
 
 

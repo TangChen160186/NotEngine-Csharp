@@ -13,10 +13,9 @@ public class TextContextMenuItem : StandardContextMenuItem
         get { return _menuItemDefinition.Text; }
     }
 
-    public override Uri IconSource
-    {
-        get { return _menuItemDefinition.IconSource; }
-    }
+    public override string PathData => _menuItemDefinition.PathData;
+    public override string PathDataForegroundName => _menuItemDefinition.PathDataForegroundName;
+
 
     public override string InputGestureText
     {

@@ -10,6 +10,7 @@
              xmlns:controls1="clr-namespace:Module.ContentExplorer.Controls"
              xmlns:behaviors="clr-namespace:Gemini.Modules.MainMenu.Behaviors;assembly=Gemini"
              xmlns:converters1="clr-namespace:Gemini.Modules.Shell.Converters;assembly=Gemini"
+             xmlns:converters2="clr-namespace:Gemini.Modules.MainMenu.Converters;assembly=Gemini"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -44,7 +45,11 @@
             <ContentPresenter Content="{Binding Path=Text}" RecognizesAccessKey="True" />
         </HierarchicalDataTemplate>
 
-        <Image x:Key="ContextMenuItemIcon" x:Shared="false" Source="{Binding IconSource, Converter={StaticResource NullableValueConverter}}" />
+        <converters2:StringToApplicationResourceConverter x:Key="ApplicationResourceConverter"/>
+        <Path x:Key="ContextMenuItemIcon" Stretch="Fill"
+              Fill="{Binding PathDataForegroundName,Converter={StaticResource ApplicationResourceConverter}}" 
+              x:Shared="false"
+              Data="{Binding PathData,Mode=OneWay}" />
 
         <Style x:Key="ContextMenuItem" TargetType="{x:Type controls1:ContextMenuItemEx}">
             <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -55,7 +60,7 @@
             <Setter Property="Command" Value="{Binding Command}" />
             <Setter Property="behaviors:MenuBehavior.UpdateCommandUiItems" Value="True" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IconSource}" Value="{x:Null}">
+                <DataTrigger Binding="{Binding PathData}" Value="{x:Null}">
                     <Setter Property="Icon" Value="{x:Null}" />
                 </DataTrigger>
             </Style.Triggers>

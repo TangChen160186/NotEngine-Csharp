@@ -13,5 +13,6 @@
                       Foreground="#fff">
     <StackPanel Margin="24">
         <TextBlock Text="NotEngine" FontSize="24"/>
+        <TextBox ></TextBox>
     </StackPanel>
 </Controls:MetroWindow>

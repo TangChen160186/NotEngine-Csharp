@@ -4,5 +4,5 @@ namespace Module.ContentExplorer.ViewModels;
 
 public interface IContextMenuBuilder
 {
-    ContextMenuModel BuildMenuBar();
+    ContextMenuModel BuildMenuBar(Type fileType);
 }

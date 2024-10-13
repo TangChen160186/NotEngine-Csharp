@@ -3,4 +3,7 @@
 
     <SolidColorBrush Color="#43454a" x:Key="FolderBrush"/>
     <SolidColorBrush Color="#fafafa" x:Key="UnKnowFileBrush"/>
+    <SolidColorBrush Color="#4db2fe" x:Key="OpenInFileExplorerBrush"/>
+
+    
 </ResourceDictionary>

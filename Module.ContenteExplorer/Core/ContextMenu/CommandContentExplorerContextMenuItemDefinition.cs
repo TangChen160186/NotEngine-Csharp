@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using System.Windows.Media;
 using Caliburn.Micro;
 using Gemini.Framework.Commands;
 
@@ -12,15 +11,16 @@ public class CommandContentExplorerContextMenuItemDefinition<TCommandDefinition>
     private readonly KeyGesture _keyGesture;
 
     public override string Text => _commandDefinition.Text;
-   
-    public override Uri IconSource => _commandDefinition.IconSource;
+    public override string PathData => _commandDefinition.PathData;
+    public override string PathDataForegroundName => _commandDefinition.PathDataForegroundName;
+
 
     public override KeyGesture KeyGesture => _keyGesture;
 
     public override CommandDefinitionBase CommandDefinition => _commandDefinition;
 
-    public CommandContentExplorerContextMenuItemDefinition(ContentExplorerContextMenuItemGroupDefinition group, int sortOrder)
-        : base(group, sortOrder)
+    public CommandContentExplorerContextMenuItemDefinition(ContentExplorerContextMenuItemGroupDefinition group, int sortOrder,IEnumerable<Type> fileTypes = null)
+        : base(group, sortOrder, fileTypes)
     {
         _commandDefinition = IoC.Get<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition));
         _keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_commandDefinition);

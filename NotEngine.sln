@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{640435
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor.Common", "Editor.Common\Editor.Common.csproj", "{3C5CE376-57CB-421E-87EE-4C370E388301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor.Core", "Editor.Core\Editor.Core.csproj", "{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor.Core", "Editor.Core\Editor.Core.csproj", "{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

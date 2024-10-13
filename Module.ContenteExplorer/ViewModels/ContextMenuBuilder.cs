@@ -2,6 +2,7 @@
 using Caliburn.Micro;
 using Gemini.Framework.Commands;
 using Module.ContentExplorer.Core.ContextMenu;
+using Module.ContentExplorer.Core.FileType;
 using Module.ContentExplorer.Models.ContextMenu;
 
 namespace Module.ContentExplorer.ViewModels;
@@ -12,7 +13,7 @@ public class ContextMenuBuilder : IContextMenuBuilder
     private readonly ICommandService _commandService;
     private readonly List<ContentExplorerContextMenuItemDefinition> _fileContextMenuItems;
     private List<ContentExplorerContextMenuItemGroupDefinition> _fileContextMenuItemGroupDefinitions;
-
+    private Type _fileType;
     [ImportingConstructor]
     public ContextMenuBuilder(ICommandService commandService,
         [ImportMany] ContentExplorerContextMenuItemDefinition[] definitions,
@@ -23,8 +24,9 @@ public class ContextMenuBuilder : IContextMenuBuilder
         _fileContextMenuItemGroupDefinitions = groups.OrderBy(e => e.SortOrder).ToList();
     }
 
-    public ContextMenuModel BuildMenuBar()
+    public ContextMenuModel BuildMenuBar(Type fileType)
     {
+        _fileType = fileType;
         ContextMenuModel result = new ContextMenuModel();
         Add(null, null, result);
         RemoveLastSeparator(result);
@@ -51,11 +53,16 @@ public class ContextMenuBuilder : IContextMenuBuilder
                 {
                     if (menuItem.Group == group)
                     {
+
                         var item = menuItem.CommandDefinition != null ?
                             new CommandContextMenuItem(_commandService.GetCommand(menuItem.CommandDefinition), parentMenuItem) :
                             (StandardContextMenuItem)new TextContextMenuItem(menuItem);
-                        result.Add(item);
-                        Add(menuItem, item, item.Children);
+                        if ( menuItem.FileTypes.Any(e => e == _fileType))
+                        {
+                            result.Add(item);
+                            Add(menuItem, item, item.Children);
+                        }
+               
                     }
                 }
 

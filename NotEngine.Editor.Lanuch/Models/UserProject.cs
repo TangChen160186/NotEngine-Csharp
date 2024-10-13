@@ -6,8 +6,4 @@ public class UserProject
     public string ProjectPath { get; set; } 
     public DateTime LastModifyTime { get; set; }
 
-
-
-
-
 }

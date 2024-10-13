@@ -13,8 +13,9 @@ public class CommandContextMenuItem : StandardContextMenuItem, ICommandUiItem
     private readonly List<StandardContextMenuItem> _listItems;
 
     public override string Text => _command.Text;
+    public override string PathData => _command.PathData;
+    public override string PathDataForegroundName => _command.PathDataForegroundName;
 
-    public override Uri IconSource => _command.IconSource;
 
     public override string InputGestureText => _keyGesture == null
         ? string.Empty
@@ -82,7 +83,8 @@ public class CommandContextMenuItem : StandardContextMenuItem, ICommandUiItem
                 break;
 
             case nameof(_command.Text):
-            case nameof(_command.IconSource):
+            case nameof(_command.PathData):
+            case nameof(_command.PathDataForegroundName):
                 NotifyOfPropertyChange(e.PropertyName);
                 break;
         }
