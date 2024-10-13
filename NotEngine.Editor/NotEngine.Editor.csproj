@@ -1,24 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);NETCOREAPP3_1_OR_GREATER</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK.GLWpfControl" Version="4.3.2" />
+    <None Remove="Resources\Icons\AppIcon.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Module.ContenteExplorer\Module.ContentExplorer.csproj" />
+    <ProjectReference Include="..\Module.Scene\Module.Scene.csproj" />
     <ProjectReference Include="..\NotEngine\NotEngine.csproj" />
     <ProjectReference Include="..\ThirdPart\src\Gemini\Gemini.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\" />
+    <Resource Include="Resources\Icons\AppIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controls\" />
   </ItemGroup>
 
 </Project>

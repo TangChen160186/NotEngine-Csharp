@@ -1,0 +1,17 @@
+﻿<Controls:MetroWindow x:Class="NotEngine.Editor.Lanuch.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Width="890"
+                      Height="625"
+                      MinHeight="625"
+                      MinWidth="890"
+                      WindowTransitionsEnabled="False"
+                      WindowStartupLocation="CenterScreen"
+                      Style="{StaticResource MainWindowStyle}"
+                      Background="#282c34"
+                      Foreground="#fff">
+    <StackPanel Margin="24">
+        <TextBlock Text="NotEngine" FontSize="24"/>
+    </StackPanel>
+</Controls:MetroWindow>

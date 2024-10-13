@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:customControls="clr-namespace:Editor.Common.CustomControls">
+   
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Controls/RenameableTextblock.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    <SolidColorBrush Color="#bbbbbb" x:Key="TreeviewItemTextBlockForeground"/>
+
+    <SolidColorBrush Color="Black" x:Key="RenameableTextboxForeground"/>
+    <SolidColorBrush Color="#ffffff" x:Key="RenameableTextboxSelectForeground"/>
+    <SolidColorBrush Color="#ffffff" x:Key="RenameableTextboxBackground"/>
+    <SolidColorBrush Color="#0078d7" x:Key="RenameableTextboxSelectBackground"/>
+    <SolidColorBrush Color="Black" x:Key="RenameableTextboxCaretBrush"/>
+
+</ResourceDictionary>
