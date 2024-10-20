@@ -5,10 +5,25 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DdsKtxSharp" Version="1.1.0.1" />
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NotEngine\NotEngine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Test.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Quad.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

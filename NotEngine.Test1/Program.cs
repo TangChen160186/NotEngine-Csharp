@@ -1,6 +1,5 @@
 ﻿using Assimp;
 using NotEngine.Assets;
-using Mesh = NotEngine.Assets.Mesh;
 
 namespace NotEngine.Test1
 {
@@ -31,7 +30,7 @@ namespace NotEngine.Test1
                 throw new Exception("load exception");
             }
 
-            List<Mesh> meshes = new List<Mesh>();
+            List<StaticMesh> meshes = new List<StaticMesh>();
             ProcessNode(Matrix4x4.Identity, scene, scene.RootNode, meshes);
 
             int index = 1;
@@ -55,17 +54,17 @@ namespace NotEngine.Test1
             }
         }
 
-        private static void ProcessNode(in Matrix4x4 transform, Scene scene, Node rootNode, List<Mesh> meshes)
+        private static void ProcessNode(in Matrix4x4 transform, Scene scene, Node rootNode, List<StaticMesh> meshes)
         {
             var nodeTransform = transform * rootNode.Transform;
             for (int i = 0; i < rootNode.MeshCount; i++)
             {
-                List<MeshVertex> vertices = new List<MeshVertex>();
+                List<StaticMeshVertex> vertices = new List<StaticMeshVertex>();
                 List<uint> indices = new List<uint>();
                 Assimp.Mesh mesh = scene.Meshes[rootNode.MeshIndices[i]];
                 
                 ProcessMesh(in nodeTransform, mesh, scene, vertices, indices);
-                meshes.Add(new Mesh(vertices.ToArray(), indices.ToArray()));
+                meshes.Add(new StaticMesh(vertices.ToArray(), indices.ToArray()));
             }
 
             for (int i = 0; i < rootNode.ChildCount; i++)
@@ -74,7 +73,7 @@ namespace NotEngine.Test1
             }
         }
 
-        private static void ProcessMesh(in Matrix4x4 transform, Assimp.Mesh mesh, Scene scene, List<MeshVertex> outVertices,
+        private static void ProcessMesh(in Matrix4x4 transform, Assimp.Mesh mesh, Scene scene, List<StaticMeshVertex> outVertices,
             List<uint> outIndices)
         {
             for (var i = 0; i < mesh.VertexCount; i++)
@@ -85,7 +84,7 @@ namespace NotEngine.Test1
                 var tangent = mesh.HasTangentBasis ? transform * mesh.Tangents[i] : new Vector3D(0, 0, 0);
                 var biTangent = mesh.HasTangentBasis ? transform * mesh.BiTangents[i] : new Vector3D(0, 0, 0);
 
-                var vertex = new MeshVertex();
+                var vertex = new StaticMeshVertex();
                 vertex.Position = vertex.Position with { X = position.X };
                 vertex.Position = vertex.Position with { Y = position.Y };
                 vertex.Position = vertex.Position with { Z = position.Z };

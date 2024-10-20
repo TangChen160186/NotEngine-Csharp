@@ -8,12 +8,10 @@
   </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Arch" Version="1.2.8" />
-
-
-        <PackageReference Include="SpirvReflector" Version="0.2.5" />
-        <PackageReference Include="Veldrid" Version="4.8.0" />
-        <PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
-        <PackageReference Include="Veldrid.SPIRV" Version="1.0.13" />
+        <PackageReference Include="OpenTK" Version="5.0.0-pre.12" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Assets\Serializers\" />
     </ItemGroup>
 
 </Project>

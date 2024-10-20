@@ -4,6 +4,6 @@ namespace NotEngine.ECS.Components;
 
 public struct MeshFilterComponent : IEntityComponent
 {
-    public Mesh? Mesh { get; set; }
+    public StaticMesh? Mesh { get; set; }
 }
 

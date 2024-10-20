@@ -1,14 +1,14 @@
-﻿using Veldrid;
+﻿//using Veldrid;
 
-namespace NotEngine.Core;
+//namespace NotEngine.Core;
 
-public abstract class Application
-{
-    protected Application()
-    {
-        Current = this;
-    }
-    public abstract GraphicsDevice Device { get;protected set; }
+//public abstract class Application
+//{
+//    protected Application()
+//    {
+//        Current = this;
+//    }
+//    public abstract GraphicsDevice Device { get;protected set; }
 
-    public static Application Current;
-}
+//    public static Application Current;
+//}
