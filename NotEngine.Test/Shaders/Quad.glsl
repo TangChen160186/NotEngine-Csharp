@@ -18,6 +18,4 @@
     void main()
     {
         outputColor = texture(yourTexture, tex);
-        float average = 0.2126 * outputColor.r + 0.7152 * outputColor.g + 0.0722 * outputColor.b;
-        outputColor = vec4(average, average, average, 1.0);
     }

@@ -1,4 +1,5 @@
-﻿using NotEngine.Core;
+﻿using MessagePack;
+using NotEngine.Core;
 
 namespace NotEngine.ECS.Components;
 
@@ -13,8 +14,9 @@ public enum ClearFlags
     SolidColor,
     Skybox,
 }
+[MessagePackObject(keyAsPropertyName:true)]
 
-public struct CameraComponent() : IEntityComponent
+public partial class CameraComponent: Component
 {
     public EProjection Projection { get; set; } = EProjection.Perspective;
     public ClearFlags ClearFlags { get; set; } = ClearFlags.SolidColor;

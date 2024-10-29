@@ -1,11 +1,22 @@
 ﻿using System.Numerics;
+using NotEngine.Assets;
 using OpenTK.Graphics.OpenGL;
 
 namespace NotEngine.Graphics;
 
+public enum EUniformType
+{
+    Bool,
+    Int,
+    Float,
+    V2,
+    V3,
+    V4,
+    Texture,
+}
 public struct UniformInfo
 {
-    public Type Type;
+    public EUniformType Type;
     public string Name;
     public int Location;
     public object? Value;
@@ -71,7 +82,7 @@ public sealed class ShaderProgram: IDisposable
         GL.GetUniformfv(Id, GetUniformLocation(name), (float*)&temp);
         res = temp;
     }
-
+    public void SetUniform(string name, bool value) => GL.ProgramUniform1i(Id, GetUniformLocation(name), value?1:0);
 
     public void SetUniform(string name, int value) => GL.ProgramUniform1i(Id,GetUniformLocation(name), value);
 
@@ -118,7 +129,7 @@ public sealed class ShaderProgram: IDisposable
                         GetUniform(name, out int b);
                         uniforms.Add(new UniformInfo()
                         {
-                            Type =typeof(bool),
+                            Type = EUniformType.Bool,
                             Name = name,
                             Value = b!=0,
                             Location = GetUniformLocation(name)
@@ -128,7 +139,7 @@ public sealed class ShaderProgram: IDisposable
                         GetUniform(name, out int i);
                         uniforms.Add(new UniformInfo()
                         {
-                            Type = typeof(int),
+                            Type = EUniformType.Int,
                             Name = name,
                             Value = i,
                             Location = GetUniformLocation(name)
@@ -138,7 +149,7 @@ public sealed class ShaderProgram: IDisposable
                         GetUniform(name, out float f);
                         uniforms.Add(new UniformInfo()
                         {
-                            Type = typeof(float),
+                            Type = EUniformType.Float,
                             Name = name,
                             Value = f,
                             Location = GetUniformLocation(name)
@@ -148,7 +159,7 @@ public sealed class ShaderProgram: IDisposable
                         GetUniform(name, out Vector2 v2);
                         uniforms.Add(new UniformInfo()
                         {
-                            Type = typeof(Vector2),
+                            Type = EUniformType.V2,
                             Name = name,
                             Value = v2,
                             Location = GetUniformLocation(name)
@@ -158,7 +169,7 @@ public sealed class ShaderProgram: IDisposable
                         GetUniform(name, out Vector3 v3);
                         uniforms.Add(new UniformInfo()
                         {
-                            Type = typeof(Vector3),
+                            Type = EUniformType.V3,
                             Name = name,
                             Value = v3,
                             Location = GetUniformLocation(name)
@@ -168,14 +179,20 @@ public sealed class ShaderProgram: IDisposable
                         GetUniform(name, out Vector4 v4);
                         uniforms.Add(new UniformInfo()
                         {
-                            Type = typeof(Vector4),
+                            Type = EUniformType.V4,
                             Name = name,
                             Value = v4,
                             Location = GetUniformLocation(name)
                         });
                         break;
                     case UniformType.Sampler2d:
-                        // TODO ADD texture2d
+                        uniforms.Add(new UniformInfo()
+                        {
+                            Type = EUniformType.Texture,
+                            Name = name,
+                            Value = null,
+                            Location = GetUniformLocation(name)
+                        });
                         break;
                     default:
                         break;
@@ -262,15 +279,8 @@ public sealed class ShaderProgram: IDisposable
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            GL.DeleteShader(Id);
             IsDisposed = true;
         }
     }
-
-    ~ShaderProgram()
-    {
-        ReleaseUnmanagedResources();
-    }
-    private void ReleaseUnmanagedResources() => GL.DeleteProgram(Id);
 }

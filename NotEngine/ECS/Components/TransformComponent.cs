@@ -1,8 +1,9 @@
-﻿using System.Numerics;
+﻿using MessagePack;
+using System.Numerics;
 
 namespace NotEngine.ECS.Components;
-
-public struct TransformComponent() : IEntityComponent
+[MessagePackObject(keyAsPropertyName: true)]
+public partial class TransformComponent: Component
 {
     private Vector3 _position = Vector3.Zero;
     private Quaternion _rotation = Quaternion.Identity;
@@ -54,10 +55,12 @@ public struct TransformComponent() : IEntityComponent
         }
     }
 
+
+    [IgnoreMember]
     public Matrix4x4 Transform => Matrix4x4.CreateScale(_scale) *
                                   Matrix4x4.CreateFromQuaternion(_rotation) *
                                   Matrix4x4.CreateTranslation(_position);
-
+    [IgnoreMember]
     public Vector3 WorldPosition
     {
         get => _worldPosition;
@@ -69,7 +72,7 @@ public struct TransformComponent() : IEntityComponent
             }
         }
     }
-
+    [IgnoreMember]
     public Quaternion WorldRotation
     {
         get => _worldRotation;
@@ -81,7 +84,7 @@ public struct TransformComponent() : IEntityComponent
             }
         }
     }
-
+    [IgnoreMember]
     public Vector3 WorldScale
     {
         get => _worldScale;
@@ -93,7 +96,7 @@ public struct TransformComponent() : IEntityComponent
             }
         }
     }
-
+    [IgnoreMember]
     public Matrix4x4 WorldTransform
     {
         get => _worldTransform;

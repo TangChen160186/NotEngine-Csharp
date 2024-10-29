@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MessagePack" Version="3.0.233-rc.1" />
     <PackageReference Include="SpirvReflector" Version="0.2.5" />
   </ItemGroup>
 

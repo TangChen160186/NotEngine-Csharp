@@ -1,26 +1,22 @@
-﻿//using Arch.Core;
+﻿namespace NotEngine.ECS;
 
-//namespace Core.ECS;
+public class Scene
+{
+    public List<Actor> Actors = [];
+    public Scene()
+    {
+       
+    }
 
-//public class Scene: IDisposable
-//{
-//    private World _world;
+    public Actor CreateActor()
+    {
+        var actor = new Actor(this);
+        Actors.Add(actor);
+        return actor;
+    }
 
-//    public Scene()
-//    {
-//        _world = World.Create();
-        
-//    }
-
-//    public Actor AddActor()
-//    {
-//        return new Actor(_world);
-//    }
-//    public void Dispose()
-//    {
-//        _world.Dispose();
-//        World.Destroy(_world);
-//    }
-   
-
-//}
+    public bool RemoveActor(Actor actor)
+    {
+        return Actors.Remove(actor);
+    }
+}

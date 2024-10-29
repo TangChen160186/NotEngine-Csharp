@@ -13,16 +13,13 @@ public sealed class IndexBuffer : IDisposable
         GL.NamedBufferStorage(_id, sizeof(uint) * data.Length, data, BufferStorageMask.DynamicStorageBit);
     }
 
+
     public void Dispose()
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            GL.DeleteBuffer(in _id);
             IsDisposed = true;
         }
     }
-
-    ~IndexBuffer() => ReleaseUnmanagedResources();
-    private void ReleaseUnmanagedResources() => GL.DeleteBuffer(in _id);
 }

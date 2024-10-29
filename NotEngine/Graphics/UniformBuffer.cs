@@ -32,14 +32,8 @@ public sealed class UniformBuffer : IDisposable
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            GL.DeleteBuffer(in _id);
             IsDisposed = true;
         }
     }
-
-
-    ~UniformBuffer() => ReleaseUnmanagedResources();
-    private void ReleaseUnmanagedResources() =>
-        GL.DeleteBuffer(in _id);
 }

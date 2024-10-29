@@ -25,18 +25,13 @@ public sealed class VertexBuffer : IDisposable
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            GL.DeleteBuffer(in _id);
             IsDisposed = true;
         }
     }
 
     public int GetStride()
     {
-        return (int)(Layouts.Sum(e => e.Count) * sizeof(float));
+        return Layouts.Sum(e => e.Count) * sizeof(float);
     }
-
-
-    ~VertexBuffer()=> ReleaseUnmanagedResources();
-    private void ReleaseUnmanagedResources() => GL.DeleteBuffer(in _id);
 }

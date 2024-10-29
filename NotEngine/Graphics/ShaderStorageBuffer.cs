@@ -14,25 +14,14 @@ public sealed class ShaderStorageBuffer : IDisposable
         
     public void SetData(IntPtr data,int size)
         =>GL.NamedBufferData(_id, size, data, VertexBufferObjectUsage.DynamicDraw);
-    
 
 
-
-    
     public void Dispose()
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            GL.DeleteBuffer(in _id);
             IsDisposed = true;
         }
     }
-
-    ~ShaderStorageBuffer()
-    {
-        ReleaseUnmanagedResources();
-    }
-    private void ReleaseUnmanagedResources()
-        => GL.DeleteBuffer(in _id);
 }

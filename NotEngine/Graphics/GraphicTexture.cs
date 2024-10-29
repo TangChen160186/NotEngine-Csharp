@@ -1,22 +1,13 @@
-﻿using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 
 namespace NotEngine.Graphics;
-
-public enum TextureType
-{
-    Texture1D,
-    Texture2D,
-    Texture3D,
-    TextureCube,
-}
 
 public abstract class GraphicTexture : IDisposable
 {
     protected int _id;
 
-    public int Id=>_id;
-   
+    public int Id => _id;
+
     public int Width { get; protected set; }
     public int Height { get; protected set; }
     public int Depth { get; protected set; }
@@ -25,83 +16,57 @@ public abstract class GraphicTexture : IDisposable
     public int SampleCount { get; protected set; }
     public int MipLevels { get; protected set; }
     public ulong Size { get; protected set; }
+
+    private ulong? _textureHandleId;
+
+    public ulong TextureHandleId => _textureHandleId ?? CreateTextureHandle();
+    public SizedInternalFormat InternalFormat { get; protected set; }
+
     public bool IsDisposed { get; protected set; }
-    public ulong TextureHandleId { get; protected set; }
-
-    public string CurrentInternalFormat => GetCurrentInternalFormat().ToString();
 
 
-    protected GraphicTexture(int width, int height, int depth, bool isCompressed, bool isSrgb = false,
-        int mipLevels = 1, int sampleCount = 1)
+    protected GraphicTexture(int width, int height, int depth, SizedInternalFormat internalFormat, bool isCompressed, bool isSrgb,
+        int mipLevels, int sampleCount)
     {
         Width = width;
         Height = height;
         Depth = depth;
-        IsCompressed = isCompressed;
+        InternalFormat = internalFormat;
+        IsCompressed = isCompressed;    
         IsSrgb = isSrgb;
         SampleCount = sampleCount;
         MipLevels = mipLevels;
     }
 
-    protected void CreateTextureHandle()
+    protected ulong CreateTextureHandle()
     {
-        TextureHandleId = GL.ARB.GetTextureHandleARB(_id);
-        GL.ARB.MakeTextureHandleResidentARB(TextureHandleId);
+        _textureHandleId = GL.ARB.GetTextureHandleARB(_id);
+        GL.ARB.MakeTextureHandleResidentARB(_textureHandleId.Value);
+        return _textureHandleId.Value;
     }
 
-    protected SizedInternalFormat GetCurrentInternalFormat()
-    {
-        SizedInternalFormat internalFormat = SizedInternalFormat.Rgba8;
-        if (!IsCompressed)
-        {
-            if (IsSrgb)
-            {
-                internalFormat = SizedInternalFormat.Srgb8Alpha8;
-            }
-        }
-        else
-        {
-            if (IsSrgb)
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    internalFormat = SizedInternalFormat.CompressedSrgbAlphaS3tcDxt5Ext;
-            }
-            else
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    internalFormat = SizedInternalFormat.CompressedRgbaS3tcDxt5Ext;
-            }
-        }
-
-        return internalFormat;
-    }
+   
 
     public abstract void UpLoad(int x, int y, int z, int width, int height, int depth,
-        byte[] data);
+        byte[] data,bool isCompressed);
 
     public void UpLoad(int x, int y, int width, int height,
         byte[] data, bool isCompressed)
     {
-        UpLoad(x, y, 0, width, height, 1, data);
+        UpLoad(x, y, 0, width, height, 1, data,isCompressed);
+        Size = (ulong)data.Length;
     }
 
 
     public abstract byte[] UnLoad();
 
-    ~GraphicTexture() => ReleaseUnmanagedResources();
-
-    private void ReleaseUnmanagedResources()
-    {
-        GL.ARB.MakeTextureHandleNonResidentARB(TextureHandleId);
-        GL.DeleteTexture(in _id);
-    }
-
     public void Dispose()
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            if (_textureHandleId != null)
+                GL.ARB.MakeTextureHandleNonResidentARB(TextureHandleId);
+            GL.DeleteTexture(in _id);
             IsDisposed = true;
         }
     }
@@ -112,15 +77,15 @@ public sealed class GraphicTexture2D : GraphicTexture
     public GraphicTexture2D(int width,
         int height,
         bool isCompressed,
+        SizedInternalFormat format, 
         bool isSrgb = false,
-        int mipLevels = 1, 
-        SizedInternalFormat? format = null) :
-        base(width, height, 1, isCompressed, isSrgb, mipLevels)
+        int mipLevels = 1
+    ) :
+        base(width, height, 1,format, isCompressed, isSrgb, mipLevels,1)
     {
-        MipLevels = mipLevels;
+
         GL.CreateTextures(TextureTarget.Texture2d, 1, ref _id);
-        GL.TextureStorage2D(_id, mipLevels, format ?? GetCurrentInternalFormat(), width, height);
-        CreateTextureHandle();
+        GL.TextureStorage2D(_id, mipLevels, format, width, height);
     }
 
 
@@ -129,17 +94,18 @@ public sealed class GraphicTexture2D : GraphicTexture
         int width,
         int height,
         int depth,
-        byte[] data)
+        byte[] data,bool isCompressed)
     {
-        if (!IsCompressed)
+
+        if (!isCompressed)
             GL.TextureSubImage2D(_id, 0, x, y, width, height,
                 PixelFormat.Rgba,
                 PixelType.UnsignedByte, data);
         else
         {
             GL.CompressedTextureSubImage2D(_id, 0, x, y, width, height,
-                (InternalFormat)GetCurrentInternalFormat(),
-                sizeof(byte) * data.Length, data);
+                (InternalFormat)InternalFormat,
+                data.Length, data);
         }
 
         if (MipLevels > 1)
@@ -165,7 +131,7 @@ public sealed class GraphicTexture2D : GraphicTexture
         else
             GL.GetTextureImage(_id, 0, PixelFormat.Rgba,
                 PixelType.UnsignedByte, size, bytes);
+        GL.Finish();
         return bytes;
     }
 }
-

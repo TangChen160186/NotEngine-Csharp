@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="4.1.0" />
     <PackageReference Include="DdsKtxSharp" Version="1.1.0.1" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
@@ -18,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Test.glsl">
+    <None Update="Shaders\Test.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Quad.glsl">
+    <None Update="Shaders\Quad.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

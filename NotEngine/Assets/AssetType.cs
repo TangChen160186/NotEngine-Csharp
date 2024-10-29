@@ -1,9 +1,9 @@
 ﻿namespace NotEngine.Assets;
 
-public enum EAssetType
+public enum AssetType
 {
     Shader,
-    Texture2D,
+    Texture,
     Mesh,
     Material,
 }

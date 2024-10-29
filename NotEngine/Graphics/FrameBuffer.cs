@@ -17,13 +17,13 @@ public sealed class FrameBuffer : IDisposable
         Width = width;
         Height = height;
         GL.CreateFramebuffer(out _id);
-        DepthAttachment = new GraphicTexture2D(width, height, false, false, 1, SizedInternalFormat.Depth32fStencil8);
+        DepthAttachment = new GraphicTexture2D(width, height, false, SizedInternalFormat.Depth32fStencil8);
         if (colorAttachmentCount > 0)
         {
             ColorAttachments = new GraphicTexture2D[colorAttachmentCount];
             for (int i = 0; i < colorAttachmentCount; i++)
             {
-                ColorAttachments[i] = new GraphicTexture2D(width, height, false, false, 1, SizedInternalFormat.Rgba8);
+                ColorAttachments[i] = new GraphicTexture2D(width, height, false, SizedInternalFormat.Rgba8);
             }
         }
 
@@ -64,27 +64,15 @@ public sealed class FrameBuffer : IDisposable
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
-            IsDisposed = true;
-        }
-    }
-
-    ~FrameBuffer()
-    {
-        ReleaseUnmanagedResources();
-    }
-
-    private void ReleaseUnmanagedResources()
-    {
-        GL.DeleteFramebuffer(in _id);
-        DepthAttachment.Dispose();
-        if (ColorAttachments != null)
-        {
-            foreach (var attachment in ColorAttachments)
+            DepthAttachment.Dispose();
+            if (ColorAttachments != null)
             {
-                attachment.Dispose();
+                foreach (var attachment in ColorAttachments)
+                {
+                    attachment.Dispose();
+                }
             }
+            IsDisposed = true;
         }
     }
 }

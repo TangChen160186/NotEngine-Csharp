@@ -7,11 +7,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Arch" Version="1.2.8" />
+        <PackageReference Include="MessagePack" Version="3.0.233-rc.1" />
         <PackageReference Include="OpenTK" Version="5.0.0-pre.12" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Assets\Serializers\" />
+      <Folder Include="Assets\Importers\" />
+      <Folder Include="Tools\" />
     </ItemGroup>
 
 </Project>

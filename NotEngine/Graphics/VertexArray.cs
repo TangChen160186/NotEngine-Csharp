@@ -50,13 +50,8 @@ public sealed class VertexArray : IDisposable
     {
         if (!IsDisposed)
         {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
+            GL.DeleteVertexArray(in _id);
             IsDisposed = true;
         }
     }
-
-    ~VertexArray() => ReleaseUnmanagedResources();
-    private void ReleaseUnmanagedResources()
-        => GL.DeleteVertexArray(in _id);
 }
