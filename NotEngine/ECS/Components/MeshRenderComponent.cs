@@ -6,7 +6,7 @@ namespace NotEngine.ECS.Components;
 [MessagePackObject(keyAsPropertyName:true)]
 public partial class MeshRenderComponent: Component
 {
-    public bool Enable { get; set; }
+    public bool Enable { get; set; } = true;
     public AssetRef<Material> Material { get; set; }
 
     public void SetMaterial(Material? material = null)

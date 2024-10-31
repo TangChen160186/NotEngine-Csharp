@@ -7,8 +7,10 @@ using Gemini.Framework;
 using Gemini.Framework.Commands;
 using Gemini.Framework.Services;
 using GongSolutions.Wpf.DragDrop;
+using Microsoft.Win32;
 using Module.ContentExplorer.Commands;
 using Module.ContentExplorer.Core.FileType;
+using Module.ContentExplorer.Imports;
 using Module.ContentExplorer.Models;
 using Module.ContentExplorer.Models.ContextMenu;
 using Module.ContentExplorer.Utils;
@@ -17,7 +19,8 @@ using Module.ContentExplorer.Utils;
 namespace Module.ContentExplorer.ViewModels;
 
 [Export]
-public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<RenameCommandDefinition>,ICommandHandler<OpenInFileExplorerCommandDefinition>
+public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<RenameCommandDefinition>,
+    ICommandHandler<OpenInFileExplorerCommandDefinition>,ICommandHandler<ImportTextureCommandDefinition>
 {
     private readonly IContextMenuBuilder _contextMenuBuilder;
 
@@ -80,8 +83,6 @@ public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<Renam
     }
 
 
-
-
     public void DragOver(IDropInfo dropInfo)
     {
         if (dropInfo.Data is FileOrFolderItem sourceItem && dropInfo.TargetItem is FileOrFolderItem targetItem &&
@@ -133,6 +134,33 @@ public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<Renam
         }
     }
 
+    Task ICommandHandler<ImportTextureCommandDefinition>.Run(Command command)
+    {
+        if (CurrentSelectFolderItem != null)
+        {
+      
+            // 创建打开文件对话框
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // 设置文件过滤器，用户可以选择特定类型的文件
+            openFileDialog.Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*";
+
+            // 显示对话框并检查用户是否选择了文件
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // 取得选择的文件路径
+                string filePath = openFileDialog.FileName;
+                TextureImporter.Import(filePath, CurrentSelectFolderItem.FullName);
+            }
+        }
+        return Task.CompletedTask;
+    }
+
+
+    void ICommandHandler<ImportTextureCommandDefinition>.Update(Command command)
+    {
+        
+    }
 
     Task ICommandHandler<RenameCommandDefinition>.Run(Command command)
     {

@@ -9,10 +9,27 @@
                       WindowTransitionsEnabled="False"
                       WindowStartupLocation="CenterScreen"
                       Style="{StaticResource MainWindowStyle}"
-                      Background="#282c34"
+                      Background="#191b1d"
                       Foreground="#fff">
-    <StackPanel Margin="24">
-        <TextBlock Text="NotEngine" FontSize="24"/>
-        <TextBox ></TextBox>
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="24">
+            <TextBlock Text="NotEngine" FontSize="24"/>
+            <TextBox FontSize="24" Background="#191d1f" Foreground="White" 
+                     BorderThickness="1" BorderBrush="#5395b4" Text="C:\Users\16018\Documents"/>
+
+            <ListBox Background="Transparent">
+                
+            </ListBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
+            <Button  Width="88" Height="24" Margin="10"
+                    Background="#262c32" Content="Create" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+
+
 </Controls:MetroWindow>

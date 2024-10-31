@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor.Common", "Editor.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor.Core", "Editor.Core\Editor.Core.csproj", "{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{770AA11E-1663-41EF-962A-83394419B758}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{770AA11E-1663-41EF-962A-83394419B758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{770AA11E-1663-41EF-962A-83394419B758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{770AA11E-1663-41EF-962A-83394419B758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{770AA11E-1663-41EF-962A-83394419B758}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +111,7 @@ Global
 		{64043573-0DFA-44F1-ABD1-290A0CE8793B} = {E5F2B37E-6AE8-4543-96D7-75A2EA0801E8}
 		{3C5CE376-57CB-421E-87EE-4C370E388301} = {C1C63A35-F070-44E1-93C6-2D3CB204E6F3}
 		{A9D443E0-2075-41CB-8FD5-AF8DF3754C2D} = {C1C63A35-F070-44E1-93C6-2D3CB204E6F3}
+		{770AA11E-1663-41EF-962A-83394419B758} = {E5F2B37E-6AE8-4543-96D7-75A2EA0801E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93068F1C-2CE2-4AD0-BD1F-96AA90E7A557}

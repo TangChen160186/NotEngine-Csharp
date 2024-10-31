@@ -1,12 +1,10 @@
-﻿using System.Data;
-using System.Numerics;
-using System.Text;
-using Arch.Core;
-using Arch.Core.Extensions;
+﻿using System.Numerics;
 using MessagePack;
 using NotEngine.Assets;
 using NotEngine.Configs;
+using NotEngine.ECS;
 using NotEngine.ECS.Components;
+using NotEngine.ECS.Systems;
 using NotEngine.Graphics;
 using OpenTK.Core.Utility;
 using OpenTK.Graphics;
@@ -20,31 +18,9 @@ namespace NotEngine.Test;
 
 partial class Sample
 {
-    interface IComponent
-    {
-        
-    }
-    [MessagePackObject(keyAsPropertyName:true)]
-    public partial class TestComponent: IComponent
-    {
-        public  int A { get;private set; } = 100;
-
-        public TestComponent(int D)
-        {
-            A = D;
-        }
-
-        public TestComponent()
-        {
-
-        }
-    }
     public static unsafe void Main(string[] args)
     {
-        var s1 = new IdComponent(null);
-        var s = MessagePackSerializer.Serialize(s1);
-
-        var m =MessagePackSerializer.Deserialize<IdComponent>(s);
+        
         EventQueue.EventRaised += EventRaised;
         ToolkitOptions options = new ToolkitOptions
         {
@@ -135,7 +111,7 @@ partial class Sample
             {
                 mesh.Bind();
                 shader.Bind();
-                shader.SetTextureHandle("yourTexture", texture.Asset.TextureHandleId);
+                shader.SetTextureHandle("u_DiffuseMap", texture.Asset.TextureHandleId);
                 shader.SetUniform("model", Matrix4x4.Identity * Matrix4x4.CreateRotationX((float)(Math.PI * 30 / 180f)) * 
                                            Matrix4x4.CreateRotationY((float)(Math.PI * 30 / 180f)));
                 shader.SetUniform("view", Matrix4x4.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.UnitY));

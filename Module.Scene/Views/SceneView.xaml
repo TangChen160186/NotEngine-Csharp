@@ -6,5 +6,7 @@
              xmlns:wpf="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <wpf:GLWpfControl x:Name="GlWpfControl"/>
+    <wpf:GLWpfControl 
+        x:Name="OpenTkControl" 
+        Render="OpenTkControl_OnRender"/>
 </UserControl>

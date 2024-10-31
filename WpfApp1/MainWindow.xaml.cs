@@ -1,26 +1,27 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Wpf;
-using System.Windows.Controls;
+using System.Windows;
 using OpenTK.Graphics.OpenGL;
 
-namespace Module.Scene.Views
+namespace WpfApp1
 {
     /// <summary>
-    /// Interaction logic for SceneView.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class SceneView : UserControl
+    public partial class MainWindow : Window
     {
-        public SceneView()
+        public MainWindow()
         {
-
             InitializeComponent();
+            // [...]
             var settings = new GLWpfControlSettings
             {
-                MajorVersion = 3,
-                MinorVersion = 5
+                MajorVersion = 4,
+                MinorVersion = 6
             };
             OpenTkControl.Start(settings);
         }
+
         private void OpenTkControl_OnRender(TimeSpan obj)
         {
             GL.ClearColor(Color4.Blue);

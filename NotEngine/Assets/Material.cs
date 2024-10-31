@@ -87,6 +87,7 @@ public partial class Material : IAsset
 
     public void Apply()
     {
+        Shader.Asset?.ShaderProgram.Bind();
         // Alpha to Coverage
         if (AlphaToMask)
             GL.Enable(EnableCap.SampleAlphaToCoverage);

@@ -8,10 +8,20 @@
   </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MessagePack" Version="3.0.233-rc.1" />
+        <PackageReference Include="MessagePack.Annotations" Version="3.0.238-rc.1" />
+        <PackageReference Include="MessagePackAnalyzer" Version="3.0.238-rc.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-3.final" />
         <PackageReference Include="OpenTK" Version="5.0.0-pre.12" />
+        <PackageReference Include="ZeroFormatter" Version="1.6.4" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Assets\Importers\" />
       <Folder Include="Tools\" />
     </ItemGroup>
 

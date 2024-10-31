@@ -4,14 +4,49 @@ using System.Collections.Concurrent;
 
 namespace NotEngine.Assets;
 
-// 定义一个委托类型，用于事件处理程序    
+[MessagePackObject(keyAsPropertyName: true)]
+public partial class AssetMap
+{
+    public static string AssetFolderPath { get; set; } = "";
+    private static readonly Lazy<AssetMap> _instance = new(() => new AssetMap()); // 懒加载
+    public ConcurrentDictionary<Guid, MetaData> MetaDatas { get; private set; } = [];
+    [IgnoreMember] public static AssetMap Instance => _instance.Value;
+
+    public MetaData? GetMetaData(Guid id)
+    {
+        return MetaDatas.GetValueOrDefault(id);
+    }
+
+    public string? GetAssetPath(Guid id)
+    {
+        var metaData = GetMetaData(id);
+        if(metaData!=null)
+            return Path.Combine(AssetFolderPath,metaData.AssetPath);
+        return null;
+    }
+}
+
+[MessagePackObject(keyAsPropertyName: true)]
+public class MetaData
+{
+    public MetaData(Guid id, string assetPath, string reloadPath)
+    {
+        Id = id;
+        AssetPath = assetPath;
+        ReloadPath = reloadPath;
+    }
+
+    public Guid Id { get; set; }
+    public string AssetPath { get; set; }
+    public string ReloadPath { get; set; }
+}
 
 public class AssetManager<T> where T : class, IAsset
 {
     public event AssetReloadEventHandler<T>? AssetReload;
 
     private readonly ConcurrentDictionary<Guid, (T asset, int refCount)> _resources = new();
-    private static readonly Lazy<AssetManager<T>> _instance = new(() => new AssetManager<T>());// 懒加载
+    private static readonly Lazy<AssetManager<T>> _instance = new(() => new AssetManager<T>()); // 懒加载
     public static AssetManager<T> Instance => _instance.Value;
 
     public T? GetResource(Guid assetId)
@@ -26,6 +61,7 @@ public class AssetManager<T> where T : class, IAsset
         {
             _resources[assetId] = (loadedAsset, 0); // 默认开始计数为0
         }
+
         return loadedAsset;
     }
 
@@ -33,7 +69,7 @@ public class AssetManager<T> where T : class, IAsset
     {
         if (_resources.TryGetValue(assetId, out var resource))
         {
-            _resources[assetId] = (resource.asset, resource.refCount + 1); 
+            _resources[assetId] = (resource.asset, resource.refCount + 1);
         }
     }
 
@@ -79,28 +115,30 @@ public class AssetManager<T> where T : class, IAsset
                 _resources[assetId] = (loadedAsset, refCount);
             }
 
-            OnAssetReload(new ReloadEventArgs<T>(loadedAsset,assetId));
+            OnAssetReload(new ReloadEventArgs<T>(loadedAsset, assetId));
         }
     }
 
     private T? LoadResource(Guid assetId)
     {
-        // 假设资源存储在一个特定位置，加载资源的实际实现
-        var path = Path.Combine(AssetConfig.AssetFolderPath, $"{assetId}.asset");
+        var metaData = AssetMap.Instance.GetMetaData(assetId);
+        if (metaData == null) return null;
+
+        var path = Path.Combine(AssetConfig.AssetFolderPath, metaData.AssetPath);
         if (File.Exists(path))
         {
             byte[] bytes = File.ReadAllBytes(path);
             return MessagePackSerializer.Deserialize<T>(bytes);
         }
+
         return null;
     }
 
-    private  void OnAssetReload(ReloadEventArgs<T> args)
+    private void OnAssetReload(ReloadEventArgs<T> args)
     {
         AssetReload?.Invoke(args);
     }
 }
-
 
 public class ReloadEventArgs<T>(T? asset, Guid assetId)
     where T : class, IAsset

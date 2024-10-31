@@ -16,4 +16,19 @@ public class ContentExplorerContextMenuDefinition
     [Export]
     public static ContentExplorerContextMenuItemDefinition OpenInFileExplorer =
         new CommandContentExplorerContextMenuItemDefinition<OpenInFileExplorerCommandDefinition>(BaseGroup, 1);
+
+
+    [Export]
+    public static ContentExplorerContextMenuItemGroupDefinition ImportGroup =
+        new ContentExplorerContextMenuItemGroupDefinition(1);
+    [Export]
+    public static ContentExplorerContextMenuItemDefinition Import =
+        new TextContentExplorerContextMenuItemDefinition(ImportGroup,0,"Import");
+
+    [Export]
+    public static ContentExplorerContextMenuItemGroupDefinition ImportSubGroup =
+        new ContentExplorerContextMenuItemGroupDefinition(Import,0);
+    [Export]
+    public static ContentExplorerContextMenuItemDefinition ImportTexture =
+        new CommandContentExplorerContextMenuItemDefinition<ImportTextureCommandDefinition>(ImportSubGroup, 0);
 }

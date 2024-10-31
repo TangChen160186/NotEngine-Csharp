@@ -1,5 +1,6 @@
 namespace Editor.Core;
 
-public class MetaFile
+public class Project
 {
+    
 }

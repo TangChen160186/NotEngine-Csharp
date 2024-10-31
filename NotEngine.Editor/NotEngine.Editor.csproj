@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Editor.Core\Editor.Core.csproj" />
     <ProjectReference Include="..\Module.ContenteExplorer\Module.ContentExplorer.csproj" />
     <ProjectReference Include="..\Module.Scene\Module.Scene.csproj" />
     <ProjectReference Include="..\NotEngine\NotEngine.csproj" />

@@ -5,13 +5,12 @@ layout (location = 0) in vec3 geo_Pos;
 layout (location = 1) in vec2 geo_TexCoords;
 layout (location = 2) in vec3 geo_Normal;
 
-layout (std140) uniform EngineUBO
+layout (std140,binding = 0) uniform EngineUBO
 {
     mat4    ubo_Model;
     mat4    ubo_View;
     mat4    ubo_Projection;
     vec3    ubo_ViewPos;
-    float   ubo_Time;
 };
 
 out VS_OUT

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using System.Windows.Controls;
 using Gemini.Framework;
 
 namespace Module.Scene.ViewModels;
@@ -9,12 +8,8 @@ public class SceneViewModel : Document
 {
     public override string DisplayName { get; set; } = "Scene";
 
-
-    public SceneViewModel()
+    protected override void OnViewReady(object view)
     {
-       
+        base.OnViewReady(view);
     }
-
-    private UserControl userControl;
-
 }

@@ -1,25 +1,41 @@
-﻿using NotEngine.ECS.Components;
+﻿using MessagePack;
+using NotEngine.ECS.Components;
 
 namespace NotEngine.ECS;
 
-public class Actor : IDisposable
+[MessagePackObject(keyAsPropertyName:true,AllowPrivate = true)]
+public partial class Actor : IDisposable
 {
+    [IgnoreMember]
     public readonly Scene Scene;
-    public List<Component> Components { get; } = [];
+    public List<Component> Components { get;  set; } = [];
 
-    internal Actor(Scene scene)
+    [IgnoreMember]
+    private Actor? _parent;
+
+    public Guid ParentId { get; private set; }
+
+    [IgnoreMember]
+    public Actor? Parent
     {
-        Scene = scene;
+        get=> _parent;
+        set => SetParent(value);
     }
+    [IgnoreMember]
+    public List<Actor> Children { get; } = [];
 
-    public void AddComponent<T>() where T : Component, new()
+    [SerializationConstructor]
+    private Actor() { }
+    internal Actor(Scene scene) { Scene = scene;}
+
+    public T AddComponent<T>() where T : Component, new()
     {
         T component = new T
         {
             Actor = this
         };
         Components.Add(component);
-        
+        return component;
     }
 
     public bool HasComponent<T>() where T : Component
@@ -65,7 +81,18 @@ public class Actor : IDisposable
     {
         Components.Remove(component);
         component.Dispose();
-        
+
+    }
+    public void SetParent(Actor? newParent)
+    {
+
+        if (_parent == newParent || newParent == this) return;
+
+        _parent?.Children.Remove(this);
+
+        _parent = newParent;
+        newParent?.Children.Add(this);
+        ParentId = newParent?.GetComponent<IdComponent>()?.Id ?? Guid.Empty;
     }
     public void Dispose()
     {

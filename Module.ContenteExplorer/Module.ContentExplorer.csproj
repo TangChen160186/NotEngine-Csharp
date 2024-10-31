@@ -10,11 +10,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Editor.Common\Editor.Common.csproj" />
+    <ProjectReference Include="..\NotEngine\NotEngine.csproj" />
     <ProjectReference Include="..\ThirdPart\src\Gemini\Gemini.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="gong-wpf-dragdrop" Version="3.2.1" />
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
 
   <ItemGroup>

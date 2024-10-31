@@ -5,6 +5,10 @@ namespace NotEngine.ECS.Components;
 [MessagePackObject(keyAsPropertyName: true)]
 public partial class TransformComponent: Component
 {
+    public TransformComponent()
+    {
+        UpdateWorldTransform();
+    }
     private Vector3 _position = Vector3.Zero;
     private Quaternion _rotation = Quaternion.Identity;
     private Vector3 _scale = Vector3.One;
@@ -16,7 +20,7 @@ public partial class TransformComponent: Component
     private Vector3 _worldScale;
     private Matrix4x4 _worldTransform;
 
-    public Vector3 Position
+    public Vector3 Position 
     {
         get => _position;
         set
