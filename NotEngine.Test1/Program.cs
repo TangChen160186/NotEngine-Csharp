@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using MessagePack;
+﻿using MessagePack;
 using NotEngine.Assets;
 using NotEngine.ECS;
 using NotEngine.ECS.Components;

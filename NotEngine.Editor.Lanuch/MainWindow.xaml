@@ -2,6 +2,7 @@
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:lanuch="clr-namespace:NotEngine.Editor.Lanuch"
                       Width="890"
                       Height="625"
                       MinHeight="625"
@@ -10,25 +11,255 @@
                       WindowStartupLocation="CenterScreen"
                       Style="{StaticResource MainWindowStyle}"
                       Background="#191b1d"
+
                       Foreground="#fff">
+    <Window.Resources>
+        <!-- 自定义 ListBoxItem 的样式 -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <!-- 鼠标悬停时的背景颜色 -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#23282a" />
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Trigger>
+
+                            <!-- 选中项的背景颜色 -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#23282a" />
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 自定义 NanoTextBox 的样式 -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#191d1f" />
+            <Setter Property="Foreground" Value="#bbbbbb" />
+            <Setter Property="BorderBrush" Value="#1e2021" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CaretBrush" Value="White" />
+            <Setter Property="SelectionBrush" Value="#0078d7" />
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <!-- 使用 AdornerDecorator 来显示错误信息，不挤占布局空间 -->
+                        <AdornerDecorator>
+                            <StackPanel>
+                                <!-- 原控件显示位置 -->
+                                <AdornedElementPlaceholder />
+
+                                <TextBlock Foreground="Red"
+                                           FontSize="12"
+                                           Margin="5,2,0,0"
+                                           Text="{Binding Path=AdornedElement.(Validation.Errors)[0].ErrorContent, 
+                                          RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Adorner}}" />
+
+                            </StackPanel>
+                        </AdornerDecorator>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="Validation.HasError" Value="True">
+                                <Setter Property="BorderBrush" Value="#ff99a4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 自定义 Button 的样式 -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#262c32" />
+            <Setter Property="Foreground" Value="#bbbbbb" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <!-- 鼠标悬停状态下的背景颜色 -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#567a8c" />
+                            </Trigger>
+
+                            <!-- 焦点状态下的背景和边框颜色 -->
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#5395b4" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#567a8c" />
+                            </Trigger>
+
+                            <Trigger Property="IsDefault" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        <StackPanel Margin="24">
-            <TextBlock Text="NotEngine" FontSize="24"/>
-            <TextBox FontSize="24" Background="#191d1f" Foreground="White" 
-                     BorderThickness="1" BorderBrush="#5395b4" Text="C:\Users\16018\Documents"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Margin="30,0" Text="NotEngine" FontSize="24" Grid.ColumnSpan="2" Foreground="#bbbbbb" />
+        <ListBox Grid.Row="1"
+                 Margin="30"
+                 HorizontalAlignment="Stretch"
+                 Foreground="#bbbbbb"
+                 Grid.Column="0"
+                 Background="Transparent"
+                 ItemsSource="{Binding Projects}"
+                 BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 SelectedItem="{Binding SelectProject}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid x:Name="Grid">
+                        <Grid.ContextMenu>
+                            <ContextMenu Background="#17191b" BorderThickness="0">
+                                <MenuItem Header="faf">
 
-            <ListBox Background="Transparent">
-                
-            </ListBox>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <Path Margin="4" Stroke="#478cbf"
+                                  StrokeThickness="1"
+                                  Data="M11.923 0C5.937 0 .976 4.384.07 10.115a11.943 11.943 0 0 1 7.645-2.754 11.982 11.982 0 0 1 9.43 4.58 11.942 11.942 0 0 0 1.015-8.769 12.066 12.066 0 0 0-.626-1.772l-.003-.008A11.968 11.968 0 0 0 11.923 0Zm7.721 2.754A12.002 12.002 0 0 1 9.398 16.521a12.082 12.082 0 0 0 9.02 5.617c.24-.119.766-.51 1.224-.89A11.971 11.971 0 0 0 23.995 12a11.98 11.98 0 0 0-4.35-9.247zM9.33 7.557a12.159 12.159 0 0 0-2.647.401A11.944 11.944 0 0 0 .01 12.595l-.005.006c.021.427.065.853.131 1.275C1.037 19.61 6 24 11.991 24c1.45 0 2.887-.26 4.243-.773a12 12 0 0 1-6.905-15.67z" />
+                            <StackPanel>
+                                <TextBlock Foreground="#bbbbbb"
+                                           Margin="4"
+                                           FontSize="12"
+                                           Text="{Binding ProjectName}" />
+
+                                <TextBlock Foreground="#ab8d9f"
+                                           HorizontalAlignment="Right"
+                                           Margin="4"
+                                           FontSize="12"
+                                           Text="{Binding ProjectPath}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Foreground="#ab8d9f"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   Margin="4"
+                                   FontSize="12"
+                                   Text="{Binding LastEditTime}" />
+                    </Grid>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="30,30,60,30">
+
+            <TextBlock Text="ProjectName" FontSize="12" Foreground="#bbbbbb" Margin="4" />
+            <TextBox FontSize="14"
+                     Text="{Binding ProjectName,ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                     Margin="4" />
+
+            <TextBlock Text="Location" FontSize="12" Foreground="#bbbbbb" Margin="4,12,4,4" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox FontSize="14" Margin="4"
+                         Text="{Binding ProjectLocation,UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Stretch" Grid.Column="0" AutoWordSelection="True" />
+                <Button Content="..."
+                        Command="{Binding SelectLocationCommand}"
+                        HorizontalAlignment="Right"
+                        Grid.Column="1" Width="40" Margin="8,0,0,0" />
+            </Grid>
+            <TextBlock Text="FullPath" FontSize="12" Foreground="#bbbbbb" Margin="4,12,4,4" />
+            <TextBox FontSize="14" Margin="4"
+                     IsReadOnly="True"
+                     BorderThickness="0"
+                     Text="{Binding ProjectPath,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                     HorizontalAlignment="Stretch" AutoWordSelection="True" />
+
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
-            <Button  Width="88" Height="24" Margin="10"
-                    Background="#262c32" Content="Create" Foreground="White"/>
-        </StackPanel>
+        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,60,0">
+                <Button Content="Delete"
+                        Command="{Binding DeleteCommand}"
+                        Margin="0,0,8,0"
+                        Width="80"
+                        Height="30" />
+
+                <Button Content="Create"
+                        Command="{Binding CreateCommand}"
+                        HorizontalAlignment="Right"
+
+                        Width="80"
+                        Height="30" />
+
+            </StackPanel>
+
+
+        </Grid>
+
     </Grid>
 
 

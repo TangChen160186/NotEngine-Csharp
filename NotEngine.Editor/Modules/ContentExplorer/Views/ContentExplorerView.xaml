@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="NotEngine.Editor.Modules.ContentExplorer.Views.ContentExplorerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.WPF.DragDrop"
+             xmlns:converters="clr-namespace:NotEngine.Editor.Modules.ContentExplorer.Converters"
+             xmlns:customControls="clr-namespace:NotEngine.Editor.CustomControls"
+             xmlns:converters1="clr-namespace:Gemini.Modules.Shell.Converters;assembly=Gemini"
+             xmlns:converters2="clr-namespace:Gemini.Modules.MainMenu.Converters;assembly=Gemini"
+             xmlns:controls11="clr-namespace:NotEngine.Editor.Modules.ContentExplorer.Controls"
+             xmlns:behaviors="clr-namespace:Gemini.Modules.MainMenu.Behaviors;assembly=Gemini"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:FileTypeToIconConverter x:Key="FileTypeToIconConverter" />
+        <converters:FileTypeToIconBrushConverter x:Key="FileTypeToIconBrushConverter" />
+        <HierarchicalDataTemplate x:Key="MasterTreeViewDataTemplate" ItemsSource="{Binding Children,Mode=TwoWay}">
+            <StackPanel Orientation="Horizontal">
+                <Path Width="18" Height="18" Stretch="Uniform"  Fill="{Binding FileType,Converter={StaticResource FileTypeToIconBrushConverter}}" 
+                      Data="{Binding FileType,Converter={StaticResource FileTypeToIconConverter}}"
+                        Margin="4,2"/>
+                <customControls:RenameableTextblock Text="{Binding Name,Mode=TwoWay}" 
+                                                    Margin="4,2" 
+                                            Focusable="False"
+                                            IsEditing="{Binding IsEditing,Mode=TwoWay}"
+                                            CanEditing="{Binding CanEdit,Mode=TwoWay}" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <Style TargetType="{x:Type TreeViewItem}" x:Key="MasterTreeViewItemContainerStyle"
+               BasedOn="{StaticResource {x:Type TreeViewItem}}">
+            <EventSetter Event="PreviewMouseRightButtonDown"
+                         Handler="TreeViewItem_PreviewMouseRightButtonDown" />
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded,Mode=TwoWay}" />
+            <Setter Property="customControls:MultiSelectTreeView.IsItemSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+            <Style.Triggers>
+                <Trigger Property="customControls:MultiSelectTreeView.IsItemSelected" Value="True">
+                    <Setter Property="Background" Value="#452735" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--context menu-->
+
+        <converters1:NullableValueConverter x:Key="NullableValueConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <HierarchicalDataTemplate  x:Key="contextMenuTemplate"
+                                  ItemsSource="{Binding Children,Mode=OneWay}">
+            <ContentPresenter Content="{Binding Path=Text}" RecognizesAccessKey="True" />
+        </HierarchicalDataTemplate>
+
+        <converters2:StringToApplicationResourceConverter x:Key="ApplicationResourceConverter"/>
+        <Path x:Key="ContextMenuItemIcon" Stretch="Fill"
+              Fill="{Binding PathDataForegroundName,Converter={StaticResource ApplicationResourceConverter}}" 
+              x:Shared="false"
+              Data="{Binding PathData,Mode=OneWay}" />
+
+        <Style x:Key="ContextMenuItem" TargetType="{x:Type controls11:ContextMenuItemEx}">
+            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Setter Property="InputGestureText" Value="{Binding InputGestureText}" />
+            <Setter Property="Icon" Value="{StaticResource ContextMenuItemIcon}" />
+            <Setter Property="IsCheckable" Value="{Binding IsChecked, Mode=OneWay}" />
+            <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=OneWay}" />
+            <Setter Property="Command" Value="{Binding Command}" />
+            <Setter Property="behaviors:MenuBehavior.UpdateCommandUiItems" Value="True" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding PathData}" Value="{x:Null}">
+                    <Setter Property="Icon" Value="{x:Null}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <customControls:MultiSelectTreeView
+            x:Name="FolderTreeView"
+            Background="Transparent"
+            Grid.Column="0"
+            Grid.Row="1"
+            dd:DragDrop.IsDragSource="True"
+            dd:DragDrop.IsDropTarget="True"
+            dd:DragDrop.DropHandler="{Binding}"
+            SelectedItems="{Binding CurrentSelectFolderItems}"
+            ItemsSource="{Binding FolderItems,Mode=OneWay}"
+            BorderThickness="0"
+            ItemTemplate="{StaticResource MasterTreeViewDataTemplate}"
+            ItemContainerStyle="{StaticResource MasterTreeViewItemContainerStyle}">
+            
+            <TreeView.ContextMenu>
+                <controls11:ContextMenuEx ItemsSource="{Binding ContextMenuItems}"
+                                        ItemTemplate="{StaticResource contextMenuTemplate}"
+                                        Style="{DynamicResource {x:Type ContextMenu}}"/>
+            </TreeView.ContextMenu>
+
+        </customControls:MultiSelectTreeView>
+        <GridSplitter VerticalAlignment="Stretch" Grid.Column="0" Width="2" Background="#5395b4" Grid.Row="1"/>
+        <Border Background="Transparent" Grid.Column="1" Grid.Row="1"/>
+    </Grid>
+</UserControl>

@@ -9,7 +9,6 @@ using Gemini.Framework.Services;
 using GongSolutions.Wpf.DragDrop;
 using Microsoft.Win32;
 using Module.ContentExplorer.Commands;
-using Module.ContentExplorer.Core.FileType;
 using Module.ContentExplorer.Imports;
 using Module.ContentExplorer.Models;
 using Module.ContentExplorer.Models.ContextMenu;
@@ -148,9 +147,8 @@ public class ContentExplorerViewModel : Tool, IDropTarget, ICommandHandler<Renam
             // 显示对话框并检查用户是否选择了文件
             if (openFileDialog.ShowDialog() == true)
             {
-                // 取得选择的文件路径
-                string filePath = openFileDialog.FileName;
-                TextureImporter.Import(filePath, CurrentSelectFolderItem.FullName);
+                TextureImporter.Import(openFileDialog.FileName, 
+                    Path.Combine(CurrentSelectFolderItem.FullName, Path.GetFileNameWithoutExtension(openFileDialog.SafeFileName)));
             }
         }
         return Task.CompletedTask;

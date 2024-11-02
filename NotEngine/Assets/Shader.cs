@@ -12,10 +12,10 @@ public class Shader : IAsset
     public string Source { get; }
 
     [SerializationConstructor]
-    public Shader(Guid assetId, string shaderSource)
+    public Shader(Guid assetId, string source)
     {
         AssetId = assetId;
-        ShaderProgram = new ShaderProgram(shaderSource);
+        ShaderProgram = new ShaderProgram(source);
         AssetId = Guid.NewGuid();
     }
     public Shader(string shaderSource)

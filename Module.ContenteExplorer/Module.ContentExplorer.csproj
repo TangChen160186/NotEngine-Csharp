@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Editor.Common\Editor.Common.csproj" />
     <ProjectReference Include="..\NotEngine\NotEngine.csproj" />
     <ProjectReference Include="..\ThirdPart\src\Gemini\Gemini.csproj" />
   </ItemGroup>

@@ -24,8 +24,6 @@ public class Module : ModuleBase
 
     public override Task PostInitializeAsync()
     {
-        //return Shell.OpenDocumentAsync(IoC.Get<SceneViewModel>());
-        return Task.CompletedTask;
-        ;
+        return Shell.OpenDocumentAsync(IoC.Get<SceneViewModel>());
     }
 }

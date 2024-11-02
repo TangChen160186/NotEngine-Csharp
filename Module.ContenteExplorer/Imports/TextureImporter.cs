@@ -20,7 +20,7 @@ public static class TextureImporter
             imageResult.Data, true);
         texture.UnLoadData();
         var result = MessagePackSerializer.Serialize(texture);
-        File.WriteAllBytes(Path.Combine(targetPath, $"{texture.AssetId}.asset"), result);
+        File.WriteAllBytes(targetPath, result);
         return texture.AssetId;
 
     }

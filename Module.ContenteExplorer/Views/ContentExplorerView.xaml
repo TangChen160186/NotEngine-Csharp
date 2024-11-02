@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.WPF.DragDrop"
              xmlns:converters="clr-namespace:Module.ContentExplorer.Converters"
-             xmlns:controls="clr-namespace:Editor.Common.CustomControls;assembly=Editor.Common"
+             xmlns:controls="clr-namespace:NotEngine.Editor.CustomControls;assembly=NotEngine.Editor"
              xmlns:behaviours="clr-namespace:Editor.Common.Behaviours;assembly=Editor.Common"
              xmlns:controls1="clr-namespace:Module.ContentExplorer.Controls"
              xmlns:behaviors="clr-namespace:Gemini.Modules.MainMenu.Behaviors;assembly=Gemini"

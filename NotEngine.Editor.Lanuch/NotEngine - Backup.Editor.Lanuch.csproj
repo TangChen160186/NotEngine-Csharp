@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <BaseOutputPath>.\NotEngine.Editor\bin\Debug\net8.0-windows\</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\..\..\Users\16018\.nuget\packages\mahapps.metro\2.4.9\lib\netcoreapp3.1\MahApps.Metro.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

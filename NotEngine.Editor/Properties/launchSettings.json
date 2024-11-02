@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NotEngine.Editor": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\16018\\Documents\\NotEngine\\NewProject"
+    }
+  }
+}

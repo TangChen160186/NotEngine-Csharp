@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseOutputPath>bin</BaseOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -18,9 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Editor.Core\Editor.Core.csproj" />
-    <ProjectReference Include="..\Module.ContenteExplorer\Module.ContentExplorer.csproj" />
-    <ProjectReference Include="..\Module.Scene\Module.Scene.csproj" />
     <ProjectReference Include="..\NotEngine\NotEngine.csproj" />
     <ProjectReference Include="..\ThirdPart\src\Gemini\Gemini.csproj" />
   </ItemGroup>
@@ -30,7 +28,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controls\" />
+    <PackageReference Include="LightImage.DragDrop.Wpf" Version="0.5.5" />
+    <PackageReference Include="OpenTK.GLWpfControl" Version="5.0.0-pre.1" />
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Modules\ContentExplorer\Views\ContentExplorerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Modules\Hierarchy\Views\HierarchyView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Modules\Hierarchy\Views\HierarchyView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

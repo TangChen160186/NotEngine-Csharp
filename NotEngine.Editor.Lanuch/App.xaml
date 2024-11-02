@@ -7,11 +7,11 @@
         <Style x:Key="MainWindowStyle"
                TargetType="mah:MetroWindow"
                BasedOn="{StaticResource {x:Type mah:MetroWindow}}">
-            <Setter Property="WindowTitleBrush" Value="#282c34" />
-            <Setter Property="NonActiveWindowTitleBrush" Value="#282c34" />
+            <Setter Property="WindowTitleBrush" Value="#191b1d" />
+            <Setter Property="NonActiveWindowTitleBrush" Value="#191b1d" />
             <Setter Property="TitleCharacterCasing" Value="Normal" />
-            <Setter Property="GlowBrush" Value="#7160e8" />
-            <Setter Property="NonActiveGlowBrush" Value="#3d3d3d" />
+            <Setter Property="GlowBrush" Value="#5395b4" />
+            <Setter Property="NonActiveGlowBrush" Value="Transparent" />
         </Style>
 
 
@@ -69,7 +69,7 @@
                     <ControlTemplate TargetType="{x:Type Button}">
 
                         <Border x:Name="grid"
-                                Background="#21252b"
+                                Background="#191b1d"
                                 BorderBrush="Transparent"
                                 BorderThickness="1 0 1 1">
                             <ContentPresenter x:Name="contentPresenter"
@@ -84,7 +84,7 @@
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding IsMouseOver, ElementName=grid}" Value="True" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter TargetName="grid" Property="Background" Value="#95b9ff" />
+                                <Setter TargetName="grid" Property="Background" Value="#3d3d3d" />
                             </MultiDataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
