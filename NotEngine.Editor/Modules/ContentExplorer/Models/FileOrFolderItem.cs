@@ -6,13 +6,10 @@ using NotEngine.Editor.Modules.ContentExplorer.Servies;
 using NotEngine.Editor.Modules.ContentExplorer.Utils;
 
 namespace NotEngine.Editor.Modules.ContentExplorer.Models;
-
 public class FileOrFolderItem : PropertyChangedBase
 {
     protected string BaseRelativePath;
-
     private string _name;
-
     public string Name
     {
         get => _name;
@@ -29,9 +26,12 @@ public class FileOrFolderItem : PropertyChangedBase
 
     public string? Extension { get; set; }
     public IFileType FileType { get; set; }
+    public bool AcceptDrop { get; set; } = true;
+
+
     public string FullName => GetFullName();
     public FileOrFolderItem? Parent { get; set; }
-    public bool AcceptDrop { get; set; } = true;
+
     public bool IsFolder { get; private set; }
 
     private bool _isEditing = false;
@@ -41,6 +41,8 @@ public class FileOrFolderItem : PropertyChangedBase
         get => _isEditing;
         set => Set(ref _isEditing, value);
     }
+
+
     private bool _canEdit = true;
 
     public bool CanEdit

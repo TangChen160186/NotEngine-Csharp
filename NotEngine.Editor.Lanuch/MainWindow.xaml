@@ -167,7 +167,8 @@
                  ItemsSource="{Binding Projects}"
                  BorderThickness="0"
                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                 SelectedItem="{Binding SelectProject}">
+                 SelectedItem="{Binding SelectProject}"
+                 >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid x:Name="Grid">

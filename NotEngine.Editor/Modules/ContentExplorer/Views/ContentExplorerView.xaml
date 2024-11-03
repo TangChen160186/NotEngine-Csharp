@@ -14,12 +14,13 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converters:FileTypeToIconConverter x:Key="FileTypeToIconConverter" />
-        <converters:FileTypeToIconBrushConverter x:Key="FileTypeToIconBrushConverter" />
+        <BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"></BoolToVisibilityConverter>
         <HierarchicalDataTemplate x:Key="MasterTreeViewDataTemplate" ItemsSource="{Binding Children,Mode=TwoWay}">
             <StackPanel Orientation="Horizontal">
-                <Path Width="18" Height="18" Stretch="Uniform"  Fill="{Binding FileType,Converter={StaticResource FileTypeToIconBrushConverter}}" 
-                      Data="{Binding FileType,Converter={StaticResource FileTypeToIconConverter}}"
-                        Margin="4,2"/>
+                <ContentControl Width="18" Height="18" Margin="4,2" 
+                                Content="{Binding FileType,Converter={StaticResource FileTypeToIconConverter}}"
+                                />
+    
                 <customControls:RenameableTextblock Text="{Binding Name,Mode=TwoWay}" 
                                                     Margin="4,2" 
                                             Focusable="False"
@@ -32,6 +33,7 @@
             <EventSetter Event="PreviewMouseRightButtonDown"
                          Handler="TreeViewItem_PreviewMouseRightButtonDown" />
             <Setter Property="IsExpanded" Value="{Binding IsExpanded,Mode=TwoWay}" />
+            <Setter Property="Visibility" Value="{Binding IsFolder,Converter={StaticResource BoolToVisibilityConverter}}" />
             <Setter Property="customControls:MultiSelectTreeView.IsItemSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
             <Style.Triggers>
                 <Trigger Property="customControls:MultiSelectTreeView.IsItemSelected" Value="True">
@@ -55,7 +57,6 @@
               Fill="{Binding PathDataForegroundName,Converter={StaticResource ApplicationResourceConverter}}" 
               x:Shared="false"
               Data="{Binding PathData,Mode=OneWay}" />
-
         <Style x:Key="ContextMenuItem" TargetType="{x:Type controls11:ContextMenuItemEx}">
             <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Setter Property="InputGestureText" Value="{Binding InputGestureText}" />
@@ -70,6 +71,48 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+
+
+        <!--ListBox-->
+        <!-- 自定义 ListBoxItem 的样式 -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <!-- 鼠标悬停时的背景颜色 -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#23282a" />
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Trigger>
+
+                            <!-- 选中项的背景颜色 -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#23282a" />
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -103,6 +146,46 @@
 
         </customControls:MultiSelectTreeView>
         <GridSplitter VerticalAlignment="Stretch" Grid.Column="0" Width="2" Background="#5395b4" Grid.Row="1"/>
-        <Border Background="Transparent" Grid.Column="1" Grid.Row="1"/>
+
+        <ListBox Name="MyListBox" Grid.Column="1" Grid.Row="1"
+                 HorizontalContentAlignment="Stretch"
+                 Loaded="MyListBox_Loaded"
+                 SizeChanged="MyListBox_SizeChanged"
+                 BorderThickness="0"
+                 Background="Transparent" 
+                 Foreground="#bbbbbb"
+                 SelectionMode="Extended"
+                 ItemsSource="{Binding CurrentFileOrFolderItems,Mode=OneWay}"
+                 dd:DragDrop.IsDragSource="True"
+                 dd:DragDrop.IsDropTarget="True"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 dd:DragDrop.DropHandler="{Binding}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel x:Name="WrapPanel" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ContextMenu>
+                <controls11:ContextMenuEx ItemsSource="{Binding ContextMenuItems}"
+                                          ItemTemplate="{StaticResource contextMenuTemplate}"
+                                          Style="{DynamicResource {x:Type ContextMenu}}"/>
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="8" Width="100">
+                        <ContentControl Width="72" Height="72" Margin="4,2" 
+                                        Content="{Binding FileType,Converter={StaticResource FileTypeToIconConverter}}"/>
+
+                        <customControls:RenameableTextblock Text="{Binding Name,Mode=TwoWay}" 
+                                                            HorizontalAlignment="Center"
+                                                            Margin="4,2" 
+                                                            Focusable="False"
+                                                            IsEditing="{Binding IsEditing,Mode=TwoWay}"
+                                                            CanEditing="{Binding CanEdit,Mode=TwoWay}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

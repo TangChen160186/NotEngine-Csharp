@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -42,9 +43,15 @@ public class ContentExplorerViewModel :
         FolderItems = [new FileOrFolderItem(ProjectInfo.AssetPath, true)];
         FolderItems[0].IsExpanded = true;
         FolderItems[0].CanEdit = false;
-        if (CurrentSelectFolderItems != null && CurrentSelectFolderItems.Count > 0)
+        CurrentSelectFolderItems.CollectionChanged += CurrentSelectFolderItemsOnCollectionChanged;
+    }
+
+    private void CurrentSelectFolderItemsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (CurrentSelectFolderItems.Any())
         {
             ContextMenuItems = _contextMenuBuilder.BuildMenuBar(CurrentSelectFolderItems[0].FileType.GetType());
+            CurrentFileOrFolderItems = CurrentSelectFolderItems[0].Children;
         }
     }
 
@@ -58,7 +65,14 @@ public class ContentExplorerViewModel :
         set => Set(ref _contextMenuItems, value);
     }
 
+    private BindableCollection<FileOrFolderItem> _currentFileOrFolderItems;
 
+    public BindableCollection<FileOrFolderItem> CurrentFileOrFolderItems
+    {
+        get => _currentFileOrFolderItems;
+        set => Set(ref _currentFileOrFolderItems, value);
+    }
+    
     private BindableCollection<FileOrFolderItem> _folderItems;
 
     public BindableCollection<FileOrFolderItem> FolderItems
@@ -115,7 +129,7 @@ public class ContentExplorerViewModel :
 
     void ICommandHandler<RenameCommandDefinition>.Update(Command command)
     {
-        if (CurrentSelectFolderItems != null && !CurrentSelectFolderItems[0].CanEdit)
+        if (CurrentSelectFolderItems.Any() && !CurrentSelectFolderItems[0].CanEdit)
             command.Enabled = false;
         else
         {
@@ -125,14 +139,12 @@ public class ContentExplorerViewModel :
 
     Task ICommandHandler<ImportTextureCommandDefinition>.Run(Command command)
     {
-        if (CurrentSelectFolderItems != null)
+        if (CurrentSelectFolderItems.Any())
         {
-            // 创建打开文件对话框
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            // 设置文件过滤器，用户可以选择特定类型的文件
-            openFileDialog.Filter =
-                "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*"
+            };
 
             // 显示对话框并检查用户是否选择了文件
             if (openFileDialog.ShowDialog() == true)
@@ -153,7 +165,7 @@ public class ContentExplorerViewModel :
 
     Task ICommandHandler<RenameCommandDefinition>.Run(Command command)
     {
-        if (CurrentSelectFolderItems != null && CurrentSelectFolderItems[0].CanEdit)
+        if (CurrentSelectFolderItems.Any() && CurrentSelectFolderItems[0].CanEdit)
             CurrentSelectFolderItems[0].IsEditing = true;
         return Task.CompletedTask;
     }
