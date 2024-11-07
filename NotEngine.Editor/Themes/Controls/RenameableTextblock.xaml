@@ -13,6 +13,7 @@
                         <Border Background="Transparent" BorderThickness="1" BorderBrush="Transparent">
                             <TextBlock x:Name="PART_TextBlock"
                                        Text="{TemplateBinding Text}"
+                                       HorizontalAlignment="Center"
                                        Visibility="{Binding IsEditing, RelativeSource={RelativeSource TemplatedParent},
                                 Converter={StaticResource BooleanToNotVisibilityConverter}}"
                                        VerticalAlignment="Center"
@@ -30,13 +31,17 @@
                             Visibility="{Binding IsEditing, 
                             RelativeSource={RelativeSource TemplatedParent}, 
                              Converter={StaticResource BooleanToVisibilityConverter}}"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            TextWrapping="Wrap"
                             CaretBrush="{DynamicResource RenameableTextboxForeground}"
                             Foreground="{DynamicResource RenameableTextboxForeground}"
                             SelectionBrush="{DynamicResource RenameableTextboxSelectBackground}"
                             SelectionForeground="{DynamicResource RenameableTextboxSelectForeground}"
                             BaseBackground="{DynamicResource RenameableTextboxBackground}"
-
+                            
                          />
 
                     </Grid>

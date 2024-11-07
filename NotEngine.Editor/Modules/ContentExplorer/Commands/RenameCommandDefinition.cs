@@ -11,11 +11,7 @@ public class RenameCommandDefinition : CommandDefinition
     public override string Text => Name;
     public override string ToolTip => Name;
 
-    
-
     [Export]
     public static CommandKeyboardShortcut RenameCommandKeyboardShortcut =
         new CommandKeyboardShortcut<RenameCommandDefinition>(new KeyGesture(Key.F2));
-
-
 }

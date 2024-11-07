@@ -6,5 +6,4 @@
 public interface IAsset : IDisposable
 {
     public Guid AssetId { get;}
-    public AssetType Type { get;}
 }

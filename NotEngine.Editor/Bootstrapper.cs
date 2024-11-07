@@ -18,6 +18,8 @@ namespace NotEngine.Editor
             ProjectInfo.AssetPath = Path.Combine(ProjectInfo.ProjectPath,"Assets");
             ProjectInfo.DefaultAssetPath = Path.Combine(ProjectInfo.ProjectPath, "Defaults");
             ProjectInfo.LogPath = Path.Combine(ProjectInfo.ProjectPath, "Logs");
+            ProjectInfo.ThumbnailPath = Path.Combine(ProjectInfo.ProjectPath, "Thumbnails");
+            ProjectInfo.ConfigPath = Path.Combine(ProjectInfo.ProjectPath, "Configs");
             base.OnStartup(sender, e);
         }
     }

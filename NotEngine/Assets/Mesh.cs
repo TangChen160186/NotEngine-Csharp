@@ -36,8 +36,6 @@ public class Mesh: IAsset
     public Guid AssetId { get; }
     public string Name { get;  }
     [IgnoreMember]
-    public AssetType Type => AssetType.Mesh;
-    [IgnoreMember]
     public int VertexCount { get; }
     [IgnoreMember]
     public int IndexCount { get; }

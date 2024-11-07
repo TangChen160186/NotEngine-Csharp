@@ -12,8 +12,6 @@ public enum TextureShape: byte
 public partial class Texture: IAsset
 {
     public Guid AssetId { get;}
-    [IgnoreMember]
-    public AssetType Type => AssetType.Texture;
     public TextureShape Shape { get; private set; }
     public int Width => GraphicTexture.Width;
     public int Height => GraphicTexture.Height;

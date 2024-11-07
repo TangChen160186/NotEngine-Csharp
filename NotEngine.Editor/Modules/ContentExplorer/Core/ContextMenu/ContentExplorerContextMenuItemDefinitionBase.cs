@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using Gemini.Framework.Commands;
+using NotEngine.Editor.Models;
 
 namespace NotEngine.Editor.Modules.ContentExplorer.Core.ContextMenu;
 
@@ -13,5 +14,5 @@ public abstract class ContentExplorerContextMenuItemDefinitionBase
     public abstract KeyGesture KeyGesture { get; }
     public abstract CommandDefinitionBase CommandDefinition { get; }
 
-    public abstract IEnumerable<Type> FileTypes { get; }
+    public abstract IEnumerable<AssetType> AssetTypes { get; }
 }

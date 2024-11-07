@@ -52,10 +52,9 @@ public partial class MainWindowViewModel : ObservableValidator
     private readonly string _appDataEngineInfoPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NotEngine", "projects.json");
     public MainWindowViewModel()
     {
-
         CreateFileWithDirectories(_appDataEngineInfoPath);
         Projects = JsonHelper.DeserializeFromFile<ObservableCollection<UserProject>>(_appDataEngineInfoPath) ?? [];
-        ProjectName = "New Project";
+        ProjectName = "NewProject";
         var projectLocation =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "NotEngine");
         if (!Directory.Exists(projectLocation)) Directory.CreateDirectory(projectLocation);
@@ -138,7 +137,14 @@ public partial class MainWindowViewModel : ObservableValidator
             Projects.Add(item);
             JsonHelper.SerializeToFile(Projects, _appDataEngineInfoPath);
 
-            OnSelectProjectChanged(item);
+         
+            // 指定要启动的进程（例如Notepad.exe）
+            string fileName = Path.Combine(Environment.CurrentDirectory, "NotEngine.Editor.exe");
+            // 要传递的参数（例如文件路径）
+            string arguments = item.ProjectPath;
+
+            StartProcess(fileName, arguments);
+            
         }
 
         ValidateAllProperties();
@@ -187,6 +193,21 @@ public partial class MainWindowViewModel : ObservableValidator
         }
     }
 
+    [RelayCommand]
+
+    public void Open()
+    {
+        if (SelectProject != null)
+        {
+            // 指定要启动的进程（例如Notepad.exe）
+            string fileName = Path.Combine(Environment.CurrentDirectory, "NotEngine.Editor.exe");
+            // 要传递的参数（例如文件路径）
+            string arguments = SelectProject.ProjectPath;
+
+            StartProcess(fileName, arguments);
+        }
+
+    }
     partial void OnProjectLocationChanged(string value)
     {
         ProjectPath = Path.Combine(ProjectLocation, ProjectName);
@@ -198,15 +219,8 @@ public partial class MainWindowViewModel : ObservableValidator
     }
 
 
-    partial void OnSelectProjectChanged(UserProject value)
-    {
-        // 指定要启动的进程（例如Notepad.exe）
-        string fileName = Path.Combine(Environment.CurrentDirectory, "NotEngine.Editor.exe");
-        // 要传递的参数（例如文件路径）
-        string arguments = value.ProjectPath;
 
-        StartProcess(fileName, arguments);
-    }
+
 
     private void StartProcess(string fileName, string arguments)
     {

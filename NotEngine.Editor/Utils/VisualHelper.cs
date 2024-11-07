@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace NotEngine.Editor.Modules.ContentExplorer.Utils;
+namespace NotEngine.Editor.Utils;
 public static class VisualHelper
 {
     // 泛型方法，根据控件类型查找子控件

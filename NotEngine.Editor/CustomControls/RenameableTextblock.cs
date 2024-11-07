@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace NotEngine.Editor.CustomControls;
 
@@ -93,11 +94,10 @@ public class RenameableTextblock : Control
         {
             _textBox.Dispatcher.BeginInvoke(new Action(() =>
             {
-
                 _textBox.Focus();    // 聚焦 TextBox
                 
                 _textBox.SelectAll(); // 选中所有文本
-            }), System.Windows.Threading.DispatcherPriority.Background);
+            }));
         }
     }
 }

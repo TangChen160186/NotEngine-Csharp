@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿using System.Text;
+using System.Threading;
+using MessagePack;
 using NotEngine.Assets;
 using NotEngine.ECS;
 using NotEngine.ECS.Components;
@@ -14,12 +16,20 @@ using Vector3 = System.Numerics.Vector3;
 
 namespace NotEngine.Test1;
 
+[MessagePackObject(keyAsPropertyName:true,SuppressSourceGeneration = true)]
+public class Test
+{
+    public string A { get; set; }
+    public string B { get; set; }
+}
 internal class Sample
 {
     static Scene _scene = new Scene();
+
+    
     public static void Main(string[] args)
     {
-        EventQueue.EventRaised += EventRaised;
+
         ToolkitOptions options = new ToolkitOptions
         {
             ApplicationName = "OpenTK tutorial",

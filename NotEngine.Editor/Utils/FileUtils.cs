@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace NotEngine.Editor.Modules.ContentExplorer.Utils;
+namespace NotEngine.Editor.Utils;
 
 public class FileUtils
 {
@@ -11,7 +11,7 @@ public class FileUtils
 
         var parentPath = Path.GetFullPath(parentFolderPath);
         var childPath = Path.GetFullPath(childFolderPath);
-        
+
         if (childPath.StartsWith(parentPath, StringComparison.OrdinalIgnoreCase))
         {
             return childPath.Substring(parentPath.Length).StartsWith(Path.DirectorySeparatorChar);
@@ -28,11 +28,12 @@ public class FileUtils
     public static string Rename(string oldFullPath, string newName)
     {
         // 获取旧路径的父目录
-        string directory = Path.GetDirectoryName(oldFullPath);
+        string directory = Path.GetDirectoryName(oldFullPath)!;
         string newPath = Path.Combine(directory, newName);
         Directory.Move(oldFullPath, newPath);  // 处理文件夹重命名
         return newPath;
     }
+
     public static bool IsFileOrFolderNameValid(string fileOrFolderName)
     {
         // 获取系统中非法的文件名字符

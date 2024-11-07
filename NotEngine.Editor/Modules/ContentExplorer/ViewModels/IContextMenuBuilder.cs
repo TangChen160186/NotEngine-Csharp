@@ -4,5 +4,5 @@ namespace NotEngine.Editor.Modules.ContentExplorer.ViewModels;
 
 public interface IContextMenuBuilder
 {
-    ContextMenuModel BuildMenuBar(Type fileType);
+    ContextMenuModel BuildMenuBar(string extension);
 }

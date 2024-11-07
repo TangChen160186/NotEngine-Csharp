@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using Gemini.Framework.Commands;
 using NotEngine.Editor.Modules.ContentExplorer.Core.ContextMenu;
 using NotEngine.Editor.Modules.ContentExplorer.Models.ContextMenu;
+using NotEngine.Editor.Services;
 
 namespace NotEngine.Editor.Modules.ContentExplorer.ViewModels;
 
@@ -12,7 +13,6 @@ public class ContextMenuBuilder : IContextMenuBuilder
     private readonly ICommandService _commandService;
     private readonly List<ContentExplorerContextMenuItemDefinition> _fileContextMenuItems;
     private List<ContentExplorerContextMenuItemGroupDefinition> _fileContextMenuItemGroupDefinitions;
-    private Type _fileType;
     [ImportingConstructor]
     public ContextMenuBuilder(ICommandService commandService,
         [ImportMany] ContentExplorerContextMenuItemDefinition[] definitions,
@@ -23,11 +23,10 @@ public class ContextMenuBuilder : IContextMenuBuilder
         _fileContextMenuItemGroupDefinitions = groups.OrderBy(e => e.SortOrder).ToList();
     }
 
-    public ContextMenuModel BuildMenuBar(Type fileType)
+    public ContextMenuModel BuildMenuBar(string extension)
     {
-        _fileType = fileType;
         ContextMenuModel result = new ContextMenuModel();
-        Add(null, null, result);
+        Add(null, null, result,extension);
         RemoveLastSeparator(result);
         return result;
     }
@@ -42,7 +41,8 @@ public class ContextMenuBuilder : IContextMenuBuilder
         }
       
     }
-    private void Add(ContentExplorerContextMenuItemDefinition? itemDefinition, StandardContextMenuItem? parentMenuItem, IObservableCollection<ContextMenuItemBase> result)
+    private void Add(ContentExplorerContextMenuItemDefinition? itemDefinition, StandardContextMenuItem? parentMenuItem, IObservableCollection<ContextMenuItemBase> result,
+        string extension)
     {
         foreach (var group in _fileContextMenuItemGroupDefinitions)
         {
@@ -52,14 +52,13 @@ public class ContextMenuBuilder : IContextMenuBuilder
                 {
                     if (menuItem.Group == group)
                     {
-
                         var item = menuItem.CommandDefinition != null ?
                             new CommandContextMenuItem(_commandService.GetCommand(menuItem.CommandDefinition), parentMenuItem) :
                             (StandardContextMenuItem)new TextContextMenuItem(menuItem);
-                        if ( menuItem.FileTypes.Any(e => e == _fileType))
+                        if ( menuItem.AssetTypes.Any(e => e == IoC.Get<IAssetTypeService>().GetAssetType(extension)))
                         {
                             result.Add(item);
-                            Add(menuItem, item, item.Children);
+                            Add(menuItem, item, item.Children,extension);
                         }
                
                     }

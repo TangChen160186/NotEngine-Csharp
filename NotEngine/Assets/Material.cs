@@ -10,7 +10,7 @@ public partial class Material : IAsset
 {
     public Guid AssetId { get; }
     [IgnoreMember]
-    public AssetType Type => AssetType.Material;
+
 
     #region 基础设置
 

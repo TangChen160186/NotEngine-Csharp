@@ -1,22 +1,36 @@
 ﻿using System.IO;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using NotEngine.Editor.Modules.ContentExplorer.Core.FileType;
-using NotEngine.Editor.Modules.ContentExplorer.Servies;
-using NotEngine.Editor.Modules.ContentExplorer.Utils;
+using NotEngine.Editor.Models;
+using NotEngine.Editor.Services;
+using NotEngine.Editor.Utils;
 
 namespace NotEngine.Editor.Modules.ContentExplorer.Models;
-public class FileOrFolderItem : PropertyChangedBase
+public class FileOrFolderItem(
+    string name,
+    BindableCollection<FileOrFolderItem>? children,
+    FileOrFolderItem? parent,
+    string extension,
+    bool acceptDrop,
+    bool canRename,
+    bool isFolder,
+    BitmapImage? icon,
+    bool isExpanded = true,
+    bool isEditing = false)
+    : PropertyChangedBase
 {
-    protected string BaseRelativePath;
-    private string _name;
+    private string _name = name;
+
     public string Name
     {
         get => _name;
         set => SetName(value);
     }
 
-    private bool _isExpanded;
+    public string NameWithExtension => Name + Extension;
+
+    private bool _isExpanded = isExpanded;
 
     public bool IsExpanded
     {
@@ -24,17 +38,16 @@ public class FileOrFolderItem : PropertyChangedBase
         set => Set(ref _isExpanded, value);
     }
 
-    public string? Extension { get; set; }
-    public IFileType FileType { get; set; }
-    public bool AcceptDrop { get; set; } = true;
+    public string Extension { get; set; } = extension;
+    public bool AcceptDrop { get; set; } = acceptDrop;
 
+    public string FullRelativePath => GetFullRelativePath();
+    public string FullPath => GetFullPath();
+    public FileOrFolderItem? Parent { get; set; } = parent;
 
-    public string FullName => GetFullName();
-    public FileOrFolderItem? Parent { get; set; }
+    public bool IsFolder { get; private set; } = isFolder;
 
-    public bool IsFolder { get; private set; }
-
-    private bool _isEditing = false;
+    private bool _isEditing = isEditing;
 
     public bool IsEditing
     {
@@ -43,82 +56,81 @@ public class FileOrFolderItem : PropertyChangedBase
     }
 
 
-    private bool _canEdit = true;
+    private bool _canRename = canRename;
 
     public bool CanEdit
     {
-        get => _canEdit;
-        set => Set(ref _canEdit, value);
+        get => _canRename;
+        set => Set(ref _canRename, value);
     }
 
-    private BindableCollection<FileOrFolderItem> _children;
 
-    public BindableCollection<FileOrFolderItem> Children
+    public AssetType AssetType => IoC.Get<IAssetTypeService>().GetAssetType(extension);
+
+
+    private BindableCollection<FileOrFolderItem>? _children = children;
+
+    public BindableCollection<FileOrFolderItem>? Children
     {
         get => _children;
         set => Set(ref _children, value);
     }
 
-    public string GetFullName()
+    private BitmapImage? _icon = icon;
+    public BitmapImage? Icon
     {
-        if (this.Parent == null)
-            return this.BaseRelativePath;
-
-        return Path.Combine(this.Parent.GetFullName(), this.Name + this.Extension);
+        get => _icon;
+        set=>Set(ref _icon, value);
     }
 
-    public FileOrFolderItem(string path, bool topItem = false, FileOrFolderItem? parent = null)
+    public string GetFullRelativePath()
     {
-        if (topItem)
-            BaseRelativePath = path;
+        if (Parent == null)
+            return Name;
 
-        Parent = parent;
+        return Path.Combine(Parent.GetFullRelativePath(), Name + Extension);
+    }
+    
 
-        if (File.Exists(path))
+
+    public void SetName(string name,bool notify = true)
+    {
+        if (notify)
         {
-            FileInfo info = new FileInfo(path);
-            this._name = Path.GetFileNameWithoutExtension(info.Name);
-            this.Extension = Path.GetExtension(info.Name);
-            this.AcceptDrop = false;
-            this.FileType = IoC.Get<IFileTypeService>().GetFileTypeByExtension(Extension);
-            this.IsFolder = false;
-        }
-
-        else if (Directory.Exists(path))
-        {
-            var directoryInfo = new DirectoryInfo(path);
-            FileType = new FolderItemType();
-            IsFolder = true;
-            Extension = string.Empty;
-            _name = directoryInfo.Name;
-            _children = [];
-            foreach (var info in directoryInfo.EnumerateFileSystemInfos())
+            if (!FileUtils.IsFileOrFolderNameValid(name))
             {
-                Children.Add(new FileOrFolderItem(info.FullName, false, this));
+                MessageBox.Show("The file or directory name is invalid");
+                return;
+            }
+
+            try
+            {
+                FileUtils.Rename(FullPath, name+extension);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return;
             }
         }
+
+
+        Set(ref _name, name, nameof(Name));
     }
 
-
-    public void SetName(string name)
+    /// <summary>
+    /// 判断是不是另一个item的子项
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <returns></returns>
+    public bool IsSubItem(FileOrFolderItem parent)
     {
-        if (!FileUtils.IsFileOrFolderNameValid(name))
-        {
-            MessageBox.Show("The file or directory name is invalid");
-            return;
-        }
-
-        try
-        {
-
-            FileUtils.Rename(GetFullName(), name);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-            return;
-        }
-
-        Set(ref _name, name);
+        if(parent.FullPath!= FullPath) 
+            Console.WriteLine();
+        return FileUtils.IsSubfolder(parent.FullPath, FullPath);
+    }
+    private string GetFullPath()
+    {
+        return Path.Combine(ProjectInfo.ProjectPath,FullRelativePath);
     }
 }

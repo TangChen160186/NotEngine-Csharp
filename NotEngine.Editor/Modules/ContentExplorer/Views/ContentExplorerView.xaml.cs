@@ -42,7 +42,7 @@ public partial class ContentExplorerView : UserControl
 
     private void AdjustItemWidths()
     {
-        double minItemWidth = 100; // 设置每个项目的最小宽度
+        double minItemWidth = 120; // 设置每个项目的最小宽度
         double listBoxWidth = MyListBox.ActualWidth;
 
         if (listBoxWidth > 0 && minItemWidth > 0)

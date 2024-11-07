@@ -10,16 +10,17 @@
              xmlns:converters2="clr-namespace:Gemini.Modules.MainMenu.Converters;assembly=Gemini"
              xmlns:controls11="clr-namespace:NotEngine.Editor.Modules.ContentExplorer.Controls"
              xmlns:behaviors="clr-namespace:Gemini.Modules.MainMenu.Behaviors;assembly=Gemini"
+             xmlns:behaviours="clr-namespace:NotEngine.Editor.Behaviours"
+             xmlns:cm="http://caliburnmicro.com"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <converters:FileTypeToIconConverter x:Key="FileTypeToIconConverter" />
-        <BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"></BoolToVisibilityConverter>
+        <converters:AssetTypeToIconConverter x:Key="FileTypeToIconConverter" />
+        <BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <HierarchicalDataTemplate x:Key="MasterTreeViewDataTemplate" ItemsSource="{Binding Children,Mode=TwoWay}">
             <StackPanel Orientation="Horizontal">
-                <ContentControl Width="18" Height="18" Margin="4,2" 
-                                Content="{Binding FileType,Converter={StaticResource FileTypeToIconConverter}}"
-                                />
+                <Image Width="18" Height="18" Margin="4,2" 
+                       Source="{Binding Icon}" />
     
                 <customControls:RenameableTextblock Text="{Binding Name,Mode=TwoWay}" 
                                                     Margin="4,2" 
@@ -83,6 +84,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Margin" Value="8" />
 
             <Setter Property="Template">
                 <Setter.Value>
@@ -132,8 +134,8 @@
             dd:DragDrop.IsDragSource="True"
             dd:DragDrop.IsDropTarget="True"
             dd:DragDrop.DropHandler="{Binding}"
-            SelectedItems="{Binding CurrentSelectFolderItems}"
-            ItemsSource="{Binding FolderItems,Mode=OneWay}"
+            SelectedItems="{Binding CurrentSelectFolderItems,Mode=TwoWay}"
+            ItemsSource="{Binding MasterFolderItems,Mode=TwoWay}"
             BorderThickness="0"
             ItemTemplate="{StaticResource MasterTreeViewDataTemplate}"
             ItemContainerStyle="{StaticResource MasterTreeViewItemContainerStyle}">
@@ -148,21 +150,22 @@
         <GridSplitter VerticalAlignment="Stretch" Grid.Column="0" Width="2" Background="#5395b4" Grid.Row="1"/>
 
         <ListBox Name="MyListBox" Grid.Column="1" Grid.Row="1"
-                 HorizontalContentAlignment="Stretch"
+                 VerticalAlignment="Stretch"
                  Loaded="MyListBox_Loaded"
                  SizeChanged="MyListBox_SizeChanged"
                  BorderThickness="0"
                  Background="Transparent" 
                  Foreground="#bbbbbb"
                  SelectionMode="Extended"
-                 ItemsSource="{Binding CurrentFileOrFolderItems,Mode=OneWay}"
+                 ItemsSource="{Binding DetailItems,Mode=OneWay}"
                  dd:DragDrop.IsDragSource="True"
                  dd:DragDrop.IsDropTarget="True"
-                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                 dd:DragDrop.DropHandler="{Binding}">
+                 dd:DragDrop.DropHandler="{Binding}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 behaviours:ListBoxSelectedItemsBehavior.BindableSelectedItems="{Binding CurrentSelectDetailItems,Mode=TwoWay}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel x:Name="WrapPanel" Orientation="Horizontal" />
+                    <WrapPanel x:Name="WrapPanel" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
 
@@ -173,12 +176,16 @@
             </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="8" Width="100">
-                        <ContentControl Width="72" Height="72" Margin="4,2" 
-                                        Content="{Binding FileType,Converter={StaticResource FileTypeToIconConverter}}"/>
+                    <StackPanel>
+                        <Image Width="160" Height="80" Margin="4,2" HorizontalAlignment="Center"
+                               VerticalAlignment="Top"
+                                        Source="{Binding Icon}"/>
 
                         <customControls:RenameableTextblock Text="{Binding Name,Mode=TwoWay}" 
-                                                            HorizontalAlignment="Center"
+                                                            cm:Message.Attach="[Event LostFocus]=[Action RenameTextboxLostFocus($this.Text)]"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Center"
+                                                            VerticalAlignment="Stretch"
                                                             Margin="4,2" 
                                                             Focusable="False"
                                                             IsEditing="{Binding IsEditing,Mode=TwoWay}"

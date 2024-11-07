@@ -5,12 +5,31 @@ using System.Collections.Concurrent;
 namespace NotEngine.Assets;
 
 [MessagePackObject(keyAsPropertyName: true)]
+public class MetaData
+{
+    public MetaData(Guid id, string assetPath, string reloadPath)
+    {
+        Id = id;
+        AssetPath = assetPath;
+        ReloadPath = reloadPath;
+    }
+
+    public Guid Id { get; set; }
+    public string AssetPath { get; set; }
+    public string ReloadPath { get; set; }
+}
+
+
+[MessagePackObject(keyAsPropertyName: true)]
 public partial class AssetMap
 {
     public static string AssetFolderPath { get; set; } = "";
-    private static readonly Lazy<AssetMap> _instance = new(() => new AssetMap()); // 懒加载
-    public ConcurrentDictionary<Guid, MetaData> MetaDatas { get; private set; } = [];
+
+    private static readonly Lazy<AssetMap> _instance = new(() => new AssetMap());
     [IgnoreMember] public static AssetMap Instance => _instance.Value;
+
+    public ConcurrentDictionary<Guid, MetaData> MetaDatas { get; private set; } = [];
+
 
     public MetaData? GetMetaData(Guid id)
     {
@@ -26,20 +45,6 @@ public partial class AssetMap
     }
 }
 
-[MessagePackObject(keyAsPropertyName: true)]
-public class MetaData
-{
-    public MetaData(Guid id, string assetPath, string reloadPath)
-    {
-        Id = id;
-        AssetPath = assetPath;
-        ReloadPath = reloadPath;
-    }
-
-    public Guid Id { get; set; }
-    public string AssetPath { get; set; }
-    public string ReloadPath { get; set; }
-}
 
 public class AssetManager<T> where T : class, IAsset
 {

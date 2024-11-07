@@ -7,8 +7,6 @@ public class Shader : IAsset
     [IgnoreMember]
     public ShaderProgram ShaderProgram { get; }
     public Guid AssetId { get; }
-    [IgnoreMember]
-    public AssetType Type=> AssetType.Shader;
     public string Source { get; }
 
     [SerializationConstructor]
