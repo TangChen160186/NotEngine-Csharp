@@ -1,56 +1,14 @@
 ﻿using MessagePack;
-using NotEngine.Configs;
 using System.Collections.Concurrent;
 
 namespace NotEngine.Assets;
-
-[MessagePackObject(keyAsPropertyName: true)]
-public class MetaData
-{
-    public MetaData(Guid id, string assetPath, string reloadPath)
-    {
-        Id = id;
-        AssetPath = assetPath;
-        ReloadPath = reloadPath;
-    }
-
-    public Guid Id { get; set; }
-    public string AssetPath { get; set; }
-    public string ReloadPath { get; set; }
-}
-
-
-[MessagePackObject(keyAsPropertyName: true)]
-public partial class AssetMap
-{
-    public static string AssetFolderPath { get; set; } = "";
-
-    private static readonly Lazy<AssetMap> _instance = new(() => new AssetMap());
-    [IgnoreMember] public static AssetMap Instance => _instance.Value;
-
-    public ConcurrentDictionary<Guid, MetaData> MetaDatas { get; private set; } = [];
-
-
-    public MetaData? GetMetaData(Guid id)
-    {
-        return MetaDatas.GetValueOrDefault(id);
-    }
-
-    public string? GetAssetPath(Guid id)
-    {
-        var metaData = GetMetaData(id);
-        if(metaData!=null)
-            return Path.Combine(AssetFolderPath,metaData.AssetPath);
-        return null;
-    }
-}
-
 
 public class AssetManager<T> where T : class, IAsset
 {
     public event AssetReloadEventHandler<T>? AssetReload;
 
     private readonly ConcurrentDictionary<Guid, (T asset, int refCount)> _resources = new();
+
     private static readonly Lazy<AssetManager<T>> _instance = new(() => new AssetManager<T>()); // 懒加载
     public static AssetManager<T> Instance => _instance.Value;
 
@@ -129,7 +87,7 @@ public class AssetManager<T> where T : class, IAsset
         var metaData = AssetMap.Instance.GetMetaData(assetId);
         if (metaData == null) return null;
 
-        var path = Path.Combine(AssetConfig.AssetFolderPath, metaData.AssetPath);
+        var path = Path.Combine(AssetMap.AssetPath, metaData.AssetPath);
         if (File.Exists(path))
         {
             byte[] bytes = File.ReadAllBytes(path);

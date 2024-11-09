@@ -2,6 +2,7 @@
 using System.Windows;
 using Caliburn.Micro;
 using Gemini;
+using NotEngine.Assets;
 
 namespace NotEngine.Editor
 {
@@ -20,6 +21,9 @@ namespace NotEngine.Editor
             ProjectInfo.LogPath = Path.Combine(ProjectInfo.ProjectPath, "Logs");
             ProjectInfo.ThumbnailPath = Path.Combine(ProjectInfo.ProjectPath, "Thumbnails");
             ProjectInfo.ConfigPath = Path.Combine(ProjectInfo.ProjectPath, "Configs");
+            ProjectInfo.AssetMapPath = Path.Combine(ProjectInfo.ProjectPath, "AssetMap.json");
+            AssetMap.Init(ProjectInfo.ProjectPath, ProjectInfo.AssetPath);
+            Graphics.Initialize();
             base.OnStartup(sender, e);
         }
     }

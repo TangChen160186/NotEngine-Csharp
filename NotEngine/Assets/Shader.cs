@@ -1,5 +1,6 @@
 ﻿using MessagePack;
-using NotEngine.Graphics;
+using NotEngine.Rendering;
+
 namespace NotEngine.Assets;
 [MessagePackObject(keyAsPropertyName:true)]
 public class Shader : IAsset
@@ -13,13 +14,12 @@ public class Shader : IAsset
     public Shader(Guid assetId, string source)
     {
         AssetId = assetId;
-        ShaderProgram = new ShaderProgram(source);
-        AssetId = Guid.NewGuid();
+        ShaderProgram = Graphics.Device.CreateShaderProgram(source);
     }
-    public Shader(string shaderSource)
+    public Shader(string source)
     {
-        Source = shaderSource;
-        ShaderProgram = new ShaderProgram(shaderSource);
+        Source = source;
+        ShaderProgram = Graphics.Device.CreateShaderProgram(source);
         AssetId = Guid.NewGuid();
     }
     public void Dispose()

@@ -6,16 +6,15 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Mesh = NotEngine.Assets.Mesh;
 
-namespace NotEngine.Test1;
+namespace NotEngine.Test2;
 
 public static class TextureImporter
 {
-    public static Guid Import(string sourcePath,string targetPath, bool isCompressed,CompressFormat format, bool isSrgb,
+    public static void Import2D(string sourcePath, string targetPath, bool isCompressed, CompressFormat format, bool isSrgb,
         bool genMipMap)
     {
         // 加载图像
         using Image<Rgba32> baseImage = Image.Load<Rgba32>(sourcePath);
-
         // 清理现有的 GL 资源或在同一上下文中创建新对象
         Texture2D texture = null;
         try
@@ -32,9 +31,8 @@ public static class TextureImporter
                 genMipMap ? mipmaps : new byte[][] { mipmaps[0] }
             );
             var bytes = MessagePackSerializer.Serialize(texture);
-            File.WriteAllBytes(Path.Combine(targetPath,@$"{format}.asset"), bytes);
+            File.WriteAllBytes(Path.Combine(targetPath, @$"{format}.2d"), bytes);
 
-            return texture.AssetId;
         }
         finally
         {
@@ -48,7 +46,7 @@ public static class MeshImporter
     public static void Import(string sourcePath, string targetFolderPath)
     {
         using var assimp = new AssimpContext();
-        var scene = assimp.ImportFile(sourcePath,PostProcessSteps.Triangulate);
+        var scene = assimp.ImportFile(sourcePath, PostProcessSteps.Triangulate);
 
         if (scene == null || (scene.SceneFlags & SceneFlags.Incomplete) == SceneFlags.Incomplete ||
             scene.RootNode == null) // 加载模型文件失败
@@ -63,7 +61,7 @@ public static class MeshImporter
         {
             var mesh = meshes[i];
             var bytes = MessagePackSerializer.Serialize(mesh);
-            File.WriteAllBytes(Path.Combine(targetFolderPath, $"{mesh.Name}.asset"),bytes);
+            File.WriteAllBytes(Path.Combine(targetFolderPath, $"{mesh.Name}.asset"), bytes);
         }
     }
 
@@ -81,7 +79,7 @@ public static class MeshImporter
 
         for (int i = 0; i < rootNode.ChildCount; i++)
         {
-            ProcessNode( scene, rootNode.Children[i], meshes);
+            ProcessNode(scene, rootNode.Children[i], meshes);
         }
     }
 
@@ -90,12 +88,12 @@ public static class MeshImporter
     {
         for (var i = 0; i < mesh.VertexCount; i++)
         {
-            var position =  mesh.Vertices[i];
-            var normal =(mesh.HasNormals ? mesh.Normals[i] : new Vector3D(0, 0, 0));
+            var position = mesh.Vertices[i];
+            var normal = (mesh.HasNormals ? mesh.Normals[i] : new Vector3D(0, 0, 0));
             var texCoords = mesh.HasTextureCoords(0) ? mesh.TextureCoordinateChannels[0][i] : new Vector3D(0, 0, 0);
             var tangent = mesh.HasTangentBasis ? mesh.Tangents[i] : new Vector3D(0, 0, 0);
-            var biTangent = mesh.HasTangentBasis ?  mesh.BiTangents[i] : new Vector3D(0, 0, 0);
-            var colors = mesh.HasVertexColors(0) ?  mesh.VertexColorChannels[0][i] : new Color4D(0, 0, 0);
+            var biTangent = mesh.HasTangentBasis ? mesh.BiTangents[i] : new Vector3D(0, 0, 0);
+            var colors = mesh.HasVertexColors(0) ? mesh.VertexColorChannels[0][i] : new Color4D(0, 0, 0);
 
             var vertex = new Vertex();
             vertex.Position = vertex.Position with { X = position.X };

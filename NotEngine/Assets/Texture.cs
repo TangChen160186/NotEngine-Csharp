@@ -1,99 +1,76 @@
 ﻿using MessagePack;
-using NotEngine.Graphics;
-using OpenTK.Graphics.OpenGL;
+using NotEngine.Rendering;
 
 namespace NotEngine.Assets;
-public enum TextureShape: byte
-{
-    Texture2D,
-}
 
-[MessagePackObject(keyAsPropertyName:true)]
-public partial class Texture: IAsset
+[MessagePackObject(keyAsPropertyName: true)]
+public partial class Texture2D : IAsset
 {
-    public Guid AssetId { get;}
-    public TextureShape Shape { get; private set; }
+    public Guid AssetId { get; }
     public int Width => GraphicTexture.Width;
     public int Height => GraphicTexture.Height;
-    public int Depth =>GraphicTexture.Depth;
     public bool IsCompressed => GraphicTexture.IsCompressed;
     public bool IsSrgb => GraphicTexture.IsSrgb;
-    public int SampleCount => GraphicTexture.SampleCount;
-    public int MipLevels => GraphicTexture.MipLevels;
-    public ulong Size => GraphicTexture.Size;
-    [IgnoreMember]
-    public SizedInternalFormat Format => GraphicTexture.InternalFormat;
-    public byte[] Data { get; private set; }
+    [IgnoreMember] public int MipLevels => GraphicTexture.MipmapLevels;
+    public ulong Size => (ulong)Data.Sum(byteArray => byteArray.Length);
+    public bool GenMipmap => GraphicTexture.GenMipmap;
+    public CompressFormat ComPressFormat => GraphicTexture.CompressFormat;
+    public TextureInternalFormat Format => GraphicTexture.TextureInternalFormat;
+    public byte[][] Data { get; }
 
-    [IgnoreMember]
-    public ulong TextureHandleId => GraphicTexture.TextureHandleId;
-    [IgnoreMember]
-    public GraphicTexture GraphicTexture { get; set; }
+    [IgnoreMember] public ulong TextureHandleId => GraphicTexture.TextureHandleId;
+    [IgnoreMember] public GraphicTexture2D GraphicTexture { get; set; }
 
     [SerializationConstructor]
-    private Texture(Guid assetId, TextureShape shape, int width, int height, int depth, bool isCompressed, bool isSrgb,
-        int mipLevels, int sampleCount, byte[] data)
+    private Texture2D(Guid assetId, int width, int height, bool isCompressed, CompressFormat compressFormat, bool isSrgb,bool genMipmap, byte[][] data)
     {
-        Shape = shape;
         AssetId = assetId;
-        CreateTexture(shape, width, height, depth, isCompressed, isSrgb, mipLevels, sampleCount, data, false);
+        GraphicTexture =
+            Graphics.Device.CreateGraphicTexture2D(width, height,
+                ToTextureInternalFormat(compressFormat, isCompressed, isSrgb), genMipmap);
+        GraphicTexture.UpLoadData(0, 0, width, height, data);
+        Data = data;
     }
 
-    public Texture(TextureShape shape, int width, int height, int depth, bool isCompressed, bool isSrgb,
-        int mipLevels, int sampleCount, byte[] data,bool isImport = false)
+    public Texture2D(int width, int height, bool isCompressed, CompressFormat format, bool isSrgb, bool genMipmap, byte[][] data)
     {
-        Shape = shape;
         AssetId = Guid.NewGuid();
-        CreateTexture(shape, width, height, depth, isCompressed, isSrgb, mipLevels, sampleCount, data,isImport);
-    }
-
-    public byte[] UnLoadData()
-    {
-        Data = GraphicTexture.UnLoad();
-        return Data;
-    }
-
-    
-    public void CreateTexture(TextureShape shape, int width, int height, int depth, bool isCompressed, bool isSrgb,
-        int mipLevels, int sampleCount, byte[] data, bool isImport)
-    {
-    
-        switch (shape)
-        {
-            case TextureShape.Texture2D:
-                GraphicTexture = new GraphicTexture2D(width, height, isCompressed, GetCurrentInternalFormat(isCompressed, isSrgb), isSrgb, mipLevels);
-                GraphicTexture.UpLoad(0, 0, width, height, data, !isImport && isCompressed);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(shape), shape, null);
-        }
+        GraphicTexture =
+            Graphics.Device.CreateGraphicTexture2D(width, height,
+                ToTextureInternalFormat(format, isCompressed, isSrgb), genMipmap);
+        Data = GraphicTexture.UpLoadData(0, 0, width, height, data, true);
     }
 
 
-    private SizedInternalFormat GetCurrentInternalFormat(bool isCompressed, bool isSrgb)
+    private static TextureInternalFormat ToTextureInternalFormat(CompressFormat compressFormat, bool isCompressed,
+        bool isSrgb)
     {
-        SizedInternalFormat internalFormat = SizedInternalFormat.Rgba8;
         if (!isCompressed)
-        {
-            if (isSrgb)
-            {
-                internalFormat = SizedInternalFormat.Srgb8Alpha8;
-            }
-        }
-        else
-        {
-            if (isSrgb)
-            {
-                internalFormat = SizedInternalFormat.CompressedSrgbAlphaS3tcDxt5Ext;
-            }
-            else
-            {
-     
-                internalFormat = SizedInternalFormat.CompressedRgbaS3tcDxt5Ext;
-            }
-        }
+            return isSrgb ? TextureInternalFormat.SRGBA8_UNORM : TextureInternalFormat.RGBA8_UNORM;
 
-        return internalFormat;
+        switch (compressFormat)
+        {
+            case CompressFormat.BC1:
+                return isSrgb
+                    ? TextureInternalFormat.BC1_SRGBA_UNORM
+                    : TextureInternalFormat.BC1_RGBA_UNORM;
+            case CompressFormat.BC2:
+                return isSrgb
+                    ? TextureInternalFormat.BC2_SRGBA_UNORM
+                    : TextureInternalFormat.BC2_RGBA_UNORM;
+            case CompressFormat.BC3:
+                return isSrgb
+                    ? TextureInternalFormat.BC3_SRGBA_UNORM
+                    : TextureInternalFormat.BC3_RGBA_UNORM;
+            case CompressFormat.BC6H:
+                return TextureInternalFormat.BC6H_RGB_UNORM;
+            case CompressFormat.BC7:
+                return isSrgb
+                    ? TextureInternalFormat.BC7_SRGBA_UNORM
+                    : TextureInternalFormat.BC7_RGBA_UNORM;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(compressFormat), compressFormat, null);
+        }
     }
 
     public void Dispose()
@@ -101,4 +78,3 @@ public partial class Texture: IAsset
         GraphicTexture.Dispose();
     }
 }
-

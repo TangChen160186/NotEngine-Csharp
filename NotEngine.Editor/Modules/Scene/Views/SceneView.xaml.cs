@@ -20,9 +20,12 @@ namespace NotEngine.Editor.Modules.Scene.Views
                 MinorVersion = 6
             };
             OpenTkControl.Start(settings);
+        
         }
-        private void OpenTkControl_OnRender(TimeSpan obj)
+        private unsafe void OpenTkControl_OnRender(TimeSpan obj)
         {
+            int a;
+            GL.GetIntegerv(GetPName.DrawFramebufferBinding,&a);
             GL.ClearColor(new Color4<Rgba>(64 / 255f, 0, 127 / 255f, 255));
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }

@@ -1,7 +1,6 @@
-﻿using System.Drawing;
-using System.Numerics;
+﻿using System.Numerics;
 using NotEngine.ECS.Components;
-using NotEngine.Graphics;
+using NotEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace NotEngine.ECS.Systems;
@@ -12,7 +11,7 @@ public class RenderSystem(Scene scene) : ISystem
     private int _height = scene.Height;
 
     //private FrameBuffer _frameBuffer = new FrameBuffer(scene.Width, scene.Height, 1);
-    private UniformBuffer _ubo = new UniformBuffer(1024);
+    private UniformBuffer _ubo = Graphics.Device.CreateUniformBuffer(1024);
 
 
     public unsafe void Run()
@@ -47,7 +46,7 @@ public class RenderSystem(Scene scene) : ISystem
             {
                 if (meshFilterComponent.Enable && meshRenderComponent.Enable && meshRenderComponent.Material.HasValue && meshFilterComponent.Mesh.HasValue)
                 {
-                    if (meshRenderComponent.Material.Asset!.Blendable)
+                    if (meshRenderComponent.Material.Asset!.RasterizerState.Blendable)
                     {
                         renderTransparentComponent.Add((meshFilterComponent, meshRenderComponent,
                             Vector3.DistanceSquared(cameraTransform.WorldPosition, transform.WorldPosition),transform.WorldTransform));
@@ -73,25 +72,16 @@ public class RenderSystem(Scene scene) : ISystem
         foreach (var (meshFilterComponent, meshRenderComponent, _,worldTransform) in renderOpaqueComponent.OrderBy(e => e.Item3))
         {
             _ubo.SetSubData((IntPtr)(&worldTransform), 16 * sizeof(float), 0);
-            meshFilterComponent.Mesh.Asset!.Bind();
-            meshRenderComponent.Material.Asset!.Apply();
-            GL.DrawElements(PrimitiveType.Triangles, meshFilterComponent.Mesh.Asset!.IndexCount, DrawElementsType.UnsignedInt,0);
+
+            Graphics.DrawMesh(meshFilterComponent.Mesh.Asset, meshRenderComponent.Material.Asset);
         }
 
-        foreach (var (meshFilterComponent, meshRenderComponent, _, worldTransform) in renderOpaqueComponent.OrderBy(e => e.Item3))
-        {
-            _ubo.SetSubData((IntPtr)(&worldTransform), 16 * sizeof(float), 0);
-            meshFilterComponent.Mesh.Asset!.Bind();
-            meshRenderComponent.Material.Asset!.Apply();
-            GL.DrawElements(PrimitiveType.Triangles, meshFilterComponent.Mesh.Asset!.IndexCount, DrawElementsType.UnsignedInt, 0);
-        }
 
         foreach (var (meshFilterComponent, meshRenderComponent, _, worldTransform) in renderTransparentComponent.OrderByDescending(e => e.Item3))
         {
             _ubo.SetSubData((IntPtr)(&worldTransform), 16 * sizeof(float), 0);
-            meshFilterComponent.Mesh.Asset!.Bind();
-            meshRenderComponent.Material.Asset!.Apply();
-            GL.DrawElements(PrimitiveType.Triangles, meshFilterComponent.Mesh.Asset!.IndexCount, DrawElementsType.UnsignedInt, 0);
+
+            Graphics.DrawMesh(meshFilterComponent.Mesh.Asset, meshRenderComponent.Material.Asset);
         }
     }
 

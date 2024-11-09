@@ -1,25 +1,26 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
-namespace NotEngine.Graphics;
+namespace NotEngine.Rendering.Opengl;
 
-public sealed class IndexBuffer : IDisposable
+internal sealed class GLIndexBuffer : IndexBuffer
 {
-    private readonly int _id;
+    private int _id;
     internal int Id => _id;
-    public bool IsDisposed { get; private set; }
-    public IndexBuffer(uint[] data)
+    public override bool IsDisposed { get; protected set; }
+    internal GLIndexBuffer(uint[] data)
     {
         GL.CreateBuffer(out _id);
         GL.NamedBufferStorage(_id, sizeof(uint) * data.Length, data, BufferStorageMask.DynamicStorageBit);
     }
 
 
-    public void Dispose()
+    public override void Dispose()
     {
-        if (!IsDisposed)
+        if (!IsDisposed && _id != 0)
         {
             GL.DeleteBuffer(in _id);
             IsDisposed = true;
+            _id = 0;
         }
     }
 }

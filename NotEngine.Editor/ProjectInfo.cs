@@ -8,4 +8,5 @@ public static class ProjectInfo
     public static string ConfigPath;
     public static string LogPath;
     public static string ThumbnailPath;
+    public static string AssetMapPath;
 }

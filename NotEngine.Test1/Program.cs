@@ -1,11 +1,9 @@
-﻿using System.Text;
-using System.Threading;
-using MessagePack;
+﻿using MessagePack;
 using NotEngine.Assets;
 using NotEngine.ECS;
 using NotEngine.ECS.Components;
 using NotEngine.ECS.Systems;
-using NotEngine.Graphics;
+using NotEngine.Rendering;
 using OpenTK.Core.Utility;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -15,13 +13,6 @@ using Quaternion = System.Numerics.Quaternion;
 using Vector3 = System.Numerics.Vector3;
 
 namespace NotEngine.Test1;
-
-[MessagePackObject(keyAsPropertyName:true,SuppressSourceGeneration = true)]
-public class Test
-{
-    public string A { get; set; }
-    public string B { get; set; }
-}
 internal class Sample
 {
     static Scene _scene = new Scene();
@@ -29,6 +20,8 @@ internal class Sample
     
     public static void Main(string[] args)
     {
+        #region Init
+
 
         ToolkitOptions options = new ToolkitOptions
         {
@@ -59,14 +52,19 @@ internal class Sample
         Toolkit.Window.SetTitle(window, "OpenTK window");
         Toolkit.Window.SetSize(window, new Vector2i(800, 600));
         Toolkit.Window.SetMode(window, WindowMode.Normal);
+        EventQueue.EventRaised += EventRaised;
+        #endregion
 
 
+        TextureImporter.Import(@"C:\Users\16018\Desktop\ibl_hdr_radiance.png", @"C:\Users\16018\Desktop\TextureTest",
+            true, CompressFormat.BC3, false, false);
 
-
-
-        MeshImporter.Import(@"C:\Users\16018\Desktop\Cube.fbx", @"C:\Users\16018\Desktop\TextureTest\MeshTest");
+        var texture =MessagePackSerializer.Deserialize<Texture2D>(
+            File.ReadAllBytes(@"C:\Users\16018\Desktop\TextureTest\BC7.asset"));
+        
+        MeshImporter.Import(@"C:\Users\16018\Desktop\Cube.fbx", @"C:\Users\16018\Desktop\MeshTest");
         List<Mesh> meshes = new List<Mesh>();
-        var dirInfo = new DirectoryInfo(@"C:\Users\16018\Desktop\TextureTest\MeshTest");
+        var dirInfo = new DirectoryInfo(@"C:\Users\16018\Desktop\MeshTest");
         foreach (var fileInfo in dirInfo.EnumerateFiles())
         {
             var bytes = File.ReadAllBytes(fileInfo.FullName);
@@ -76,21 +74,20 @@ internal class Sample
 
         var camera = _scene.CreateActor();
         camera.AddComponent<CameraComponent>();
-        camera.GetComponent<TransformComponent>()!.WorldPosition = new Vector3(0, 0, -3);
+        camera.GetComponent<TransformComponent>()!.WorldPosition = new Vector3(0, 0, -10);
    
 
 
         var actor = _scene.CreateActor();
         actor.AddComponent<MeshFilterComponent>().Mesh = meshes[0];
         actor.AddComponent<MeshRenderComponent>().Material =new Material(new Shader(File.ReadAllText("Shaders/Test.glsl")));
-        actor.GetComponent<MeshRenderComponent>().Material.Asset.Blendable = true;
+        actor.GetComponent<MeshRenderComponent>().Material.Asset.Blendable = false;
+        actor.GetComponent<MeshRenderComponent>().Material.Asset.SetUniform("u_DiffuseMap", new AssetRef<Texture2D>(texture));
         TransformSystem system = new TransformSystem(_scene);
         RenderSystem renderSystem = new RenderSystem(_scene);
 
 
         system.Run();
-
-        
         while (true)
         {
             Toolkit.Window.ProcessEvents(false);

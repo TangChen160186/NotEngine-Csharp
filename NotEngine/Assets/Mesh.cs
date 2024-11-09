@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 using MessagePack;
-using NotEngine.Graphics;
+using NotEngine.Rendering;
 
 namespace NotEngine.Assets;
 
@@ -92,9 +92,9 @@ public class Mesh: IAsset
             vertexData.Add(vertex.Color.W);
         }
 
-        _vao = new VertexArray();
-        _vbo = new VertexBuffer(vertexData.ToArray(), Vertex.VertexLayouts);
-        _ibo = new IndexBuffer(indices);
+        _vao = Graphics.Device.CreateVertexArray();
+        _vbo = Graphics.Device.CreateVertexBuffer(vertexData.ToArray(), Vertex.VertexLayouts);
+        _ibo = Graphics.Device.CreateIndexBuffer(indices);
         _vao.BindIndexBuffer(_ibo);
         _vao.BindVertexBuffer(_vbo);
     }

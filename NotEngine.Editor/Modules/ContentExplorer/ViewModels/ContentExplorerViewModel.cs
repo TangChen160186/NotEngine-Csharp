@@ -9,7 +9,10 @@ using Gemini.Framework;
 using Gemini.Framework.Commands;
 using Gemini.Framework.Services;
 using GongSolutions.Wpf.DragDrop;
+using Microsoft.Win32;
+using NotEngine.Assets;
 using NotEngine.Editor.Modules.ContentExplorer.Commands;
+using NotEngine.Editor.Modules.ContentExplorer.Imports;
 using NotEngine.Editor.Modules.ContentExplorer.Models;
 using NotEngine.Editor.Modules.ContentExplorer.Models.ContextMenu;
 
@@ -127,6 +130,15 @@ public class ContentExplorerViewModel :
             FileOrFolderItem fileOrFolderItem = new FileOrFolderItem(Path.GetFileNameWithoutExtension(item.Name),
                 null, masterFolderItem, item.Extension, false, true,
                 false, null);
+            if (fileOrFolderItem.Extension == ".2d")
+            {
+                var id = AssetMap.Instance.GetIdByAssetPath(fileOrFolderItem.FullRelativePath);
+                var targetThumbPath = Path.Combine(
+                    ProjectInfo.ThumbnailPath,
+                    id.Value.ToString(), "0.png");
+                if (id != null && File.Exists(targetThumbPath))
+                    fileOrFolderItem.Icon = _resourceManager.GetBitmapFromAbsolutePath(targetThumbPath);
+            }
             res.Add(fileOrFolderItem);
         }
         return res;
@@ -354,21 +366,37 @@ public class ContentExplorerViewModel :
     #region Command ImportTexture
     Task ICommandHandler<ImportTextureCommandDefinition>.Run(Command command)
     {
-        //if (CurrentSelectFolderItems.Any())
-        //{
-        //    OpenFileDialog openFileDialog = new OpenFileDialog
-        //    {
-        //        Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*"
-        //    };
+        if (CurrentSelectFolderItems.Any())
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*"
+            };
 
-        //    // 显示对话框并检查用户是否选择了文件
-        //    if (openFileDialog.ShowDialog() == true)
-        //    {
-        //        TextureImporter.Import(openFileDialog.FileName,
-        //            Path.Combine(CurrentSelectFolderItems[0].FullPath,
-        //                Path.GetFileNameWithoutExtension(openFileDialog.SafeFileName)));
-        //    }
-        //}
+            // 显示对话框并检查用户是否选择了文件
+            if (openFileDialog.ShowDialog() == true)
+            {
+                TextureImporter.Import2D(openFileDialog.FileName,
+                    CurrentSelectFolderItems[0].FullRelativePath,
+                    false,
+                    default, 
+                    false,true);
+                FileInfo fileInfo = new FileInfo(Path.Combine(CurrentSelectFolderItems[0].FullRelativePath,
+                    openFileDialog.SafeFileName));
+
+
+                var newItem = new FileOrFolderItem(Path.GetFileNameWithoutExtension(fileInfo.Name),
+                    null, CurrentSelectFolderItems[0], ".2d", false, true, false, null,false,false);
+                var d = AssetMap.Instance.GetIdByAssetPath(newItem.FullRelativePath);
+                if (AssetMap.Instance.GetIdByAssetPath(newItem.FullRelativePath) != null && File.Exists(Path.Combine(
+                        ProjectInfo.ThumbnailPath,
+                        AssetMap.Instance.GetIdByAssetPath(newItem.FullRelativePath).Value.ToString(), "0.png")))
+                    newItem.Icon = _resourceManager.GetBitmapFromAbsolutePath(Path.Combine(
+                        ProjectInfo.ProjectPath,
+                        AssetMap.Instance.GetIdByAssetPath(newItem.FullRelativePath)!.Value.ToString(), "0.png"));
+            }
+           
+        }
 
         return Task.CompletedTask;
     }

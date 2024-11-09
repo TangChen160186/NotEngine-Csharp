@@ -42,7 +42,7 @@ in VS_OUT
 } fs_in;
 
 uniform vec4        u_Diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-layout(bindless_sampler)  uniform sampler2D   u_DiffuseMap;
+layout(bindless_sampler) uniform sampler2D   u_DiffuseMap;
 uniform vec2        u_TextureTiling = vec2(1.0, 1.0);
 uniform vec2        u_TextureOffset = vec2(0.0, 0.0);
 
@@ -59,5 +59,6 @@ vec3 Lambert(vec3 p_fragPos, vec3 p_normal)
 void main()
 {
     const vec4 diffuse = texture(u_DiffuseMap, u_TextureOffset + vec2(mod(fs_in.TexCoords.x * u_TextureTiling.x, 1), mod(fs_in.TexCoords.y * u_TextureTiling.y, 1))) * u_Diffuse;
-    FRAGMENT_COLOR = vec4(Lambert(fs_in.FragPos, fs_in.Normal) * diffuse.rgb, diffuse.a);
+    FRAGMENT_COLOR = vec4( diffuse.rgb, diffuse.a);
+
 }
